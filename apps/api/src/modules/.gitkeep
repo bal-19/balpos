@@ -1,0 +1,3 @@
+Module per fitur (auth, pos, kitchen, inventory, dst.) ditambahkan mulai Phase 1.
+Lihat docs/04-backend-architecture.md untuk struktur wajib per module dan
+docs/13-roadmap.md untuk urutan implementasinya.

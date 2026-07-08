@@ -1,0 +1,4 @@
+{
+  "extends": "@restaurant-pos/tsconfig/react-library.json",
+  "include": ["src"]
+}

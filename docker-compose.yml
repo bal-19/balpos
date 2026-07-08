@@ -1,0 +1,107 @@
+name: restaurant-pos
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    restart: unless-stopped
+    env_file:
+      - apps/api/.env
+    environment:
+      - PORT=4000
+    ports:
+      - "${API_PORT:-4000}:4000"
+    depends_on:
+      - redis
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/api/node_modules
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        APP_DIR: apps/dashboard
+        APP_PORT: "5173"
+    restart: unless-stopped
+    env_file:
+      - apps/dashboard/.env
+    ports:
+      - "${DASHBOARD_PORT:-5173}:5173"
+    depends_on:
+      - api
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/dashboard/node_modules
+
+  kitchen-display:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        APP_DIR: apps/kitchen-display
+        APP_PORT: "5174"
+    restart: unless-stopped
+    env_file:
+      - apps/kitchen-display/.env
+    ports:
+      - "${KITCHEN_DISPLAY_PORT:-5174}:5174"
+    depends_on:
+      - api
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/kitchen-display/node_modules
+
+  customer-display:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        APP_DIR: apps/customer-display
+        APP_PORT: "5175"
+    restart: unless-stopped
+    env_file:
+      - apps/customer-display/.env
+    ports:
+      - "${CUSTOMER_DISPLAY_PORT:-5175}:5175"
+    depends_on:
+      - api
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/customer-display/node_modules
+
+  ordering:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        APP_DIR: apps/ordering
+        APP_PORT: "5176"
+    restart: unless-stopped
+    env_file:
+      - apps/ordering/.env
+    ports:
+      - "${ORDERING_PORT:-5176}:5176"
+    depends_on:
+      - api
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/ordering/node_modules
+
+volumes:
+  redis-data:

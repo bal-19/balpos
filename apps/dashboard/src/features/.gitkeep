@@ -1,0 +1,3 @@
+Feature module (pos, inventory, crm, dst.) ditambahkan mulai Phase 1/2.
+Setiap feature berisi components/, hooks/, services/, types/, routes/ —
+lihat docs/05-frontend-architecture.md.

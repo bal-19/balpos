@@ -1,0 +1,7 @@
+[install]
+peer = true
+exact = false
+linker = "hoisted"
+
+[install.cache]
+disable = false

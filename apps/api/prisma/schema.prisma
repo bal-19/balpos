@@ -1,0 +1,13 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Models ditambahkan bertahap per module mulai Phase 1 (lihat docs/11-data-model.md
+// dan docs/13-roadmap.md). Schema ini baru persiapan koneksi — migration belum
+// dijalankan (`prisma migrate dev` menyusul saat model pertama ditambahkan).

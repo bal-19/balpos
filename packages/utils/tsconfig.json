@@ -1,0 +1,7 @@
+{
+  "extends": "@restaurant-pos/tsconfig/node-library.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src"]
+}
