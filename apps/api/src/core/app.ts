@@ -6,6 +6,9 @@ import helmet from "helmet";
 import { env } from "../config/env.js";
 import { authRoutes } from "../modules/auth/routes/auth.routes.js";
 import { dashboardRoutes } from "../modules/dashboard/routes/dashboard.routes.js";
+import { kitchenRoutes } from "../modules/kitchen/routes/kitchen.routes.js";
+import { orderingRoutes } from "../modules/ordering/routes/ordering.routes.js";
+import { paymentRoutes } from "../modules/payment/routes/payment.routes.js";
 import { posRoutes } from "../modules/pos/routes/pos.routes.js";
 import { settingsRoutes } from "../modules/settings/routes/settings.routes.js";
 import { errorHandler } from "../shared/middlewares/error-handler.js";
@@ -39,6 +42,9 @@ export function createApp(): Express {
   app.use("/api/settings", settingsRoutes);
   app.use("/api/pos", posRoutes);
   app.use("/api/dashboard", dashboardRoutes);
+  app.use("/api/payments", paymentRoutes);
+  app.use("/api/kitchen", kitchenRoutes);
+  app.use("/api/ordering", orderingRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

@@ -6,6 +6,8 @@ export const PERMISSION_CODES = {
   CATALOG_MANAGE: "catalog.manage",
   POS_TABLE_VIEW: "pos.table.view",
   POS_ORDER_CREATE: "pos.order.create",
+  KITCHEN_VIEW: "kitchen.view",
+  KITCHEN_MANAGE: "kitchen.manage",
   ROLE_MANAGE: "role.manage",
 } as const;
 

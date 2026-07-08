@@ -1,4 +1,4 @@
-import type { PublicTheme, StoreSetting as StoreSettingDto } from "@restaurant-pos/types";
+import type { PublicOutletInfo, PublicTheme, StoreSetting as StoreSettingDto } from "@restaurant-pos/types";
 import type { StoreSetting } from "@prisma/client";
 
 export function toStoreSettingDto(setting: StoreSetting): StoreSettingDto {
@@ -18,6 +18,15 @@ export function toStoreSettingDto(setting: StoreSetting): StoreSettingDto {
 
 export function toPublicThemeDto(setting: StoreSetting): PublicTheme {
   return {
+    storeName: setting.storeName,
+    logoUrl: setting.logoUrl,
+    primaryColor: setting.primaryColor,
+  };
+}
+
+export function toPublicOutletInfoDto(setting: StoreSetting): PublicOutletInfo {
+  return {
+    outletId: setting.outletId,
     storeName: setting.storeName,
     logoUrl: setting.logoUrl,
     primaryColor: setting.primaryColor,

@@ -11,6 +11,8 @@ const PERMISSIONS = [
   { code: "catalog.manage", module: "settings", description: "Kelola kategori & produk" },
   { code: "pos.table.view", module: "pos", description: "Lihat daftar meja" },
   { code: "pos.order.create", module: "pos", description: "Buat order/checkout" },
+  { code: "kitchen.view", module: "kitchen", description: "Lihat order aktif di Kitchen Display" },
+  { code: "kitchen.manage", module: "kitchen", description: "Update status masak item order" },
   { code: "role.manage", module: "auth", description: "Kelola role & permission (cadangan, belum dipakai UI)" },
 ] as const;
 
@@ -91,6 +93,25 @@ async function main() {
       ),
   );
 
+  const kitchenRole = await prisma.role.upsert({
+    where: { tenantId_code: { tenantId: tenant.id, code: "KITCHEN" } },
+    update: {},
+    create: { tenantId: tenant.id, code: "KITCHEN", name: "Kitchen", isSystem: true },
+  });
+
+  const kitchenPermissionCodes = ["kitchen.view", "kitchen.manage"];
+  await Promise.all(
+    permissions
+      .filter((permission) => kitchenPermissionCodes.includes(permission.code))
+      .map((permission) =>
+        prisma.rolePermission.upsert({
+          where: { roleId_permissionId: { roleId: kitchenRole.id, permissionId: permission.id } },
+          update: {},
+          create: { roleId: kitchenRole.id, permissionId: permission.id },
+        }),
+      ),
+  );
+
   await prisma.user.upsert({
     where: { email: "owner@balpos.local" },
     update: {},
@@ -114,6 +135,19 @@ async function main() {
       name: "Cashier Demo",
       email: "cashier@balpos.local",
       passwordHash: await hashPassword("Cashier#123"),
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "kitchen@balpos.local" },
+    update: {},
+    create: {
+      tenantId: tenant.id,
+      outletId: outlet.id,
+      roleId: kitchenRole.id,
+      name: "Kitchen Demo",
+      email: "kitchen@balpos.local",
+      passwordHash: await hashPassword("Kitchen#123"),
     },
   });
 
@@ -168,6 +202,8 @@ async function main() {
   console.log("=== Seed selesai ===");
   console.log("Owner  : owner@balpos.local  / Owner#123");
   console.log("Cashier: cashier@balpos.local / Cashier#123");
+  console.log("Kitchen: kitchen@balpos.local / Kitchen#123");
+  console.log("Table IDs (untuk QR ordering):", tableNames.join(", "), "— cek Prisma Studio untuk id aslinya.");
 }
 
 main()

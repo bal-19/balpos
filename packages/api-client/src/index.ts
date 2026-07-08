@@ -33,7 +33,9 @@ export function configureAuthClient(client: AxiosInstance, options: ConfigureAut
     async (error) => {
       const originalRequest = error.config as (typeof error.config & { _retry?: boolean }) | undefined;
 
-      if (error.response?.status !== 401 || !originalRequest || originalRequest._retry) {
+      const isRefreshCall = originalRequest?.url?.includes(refreshEndpoint);
+
+      if (error.response?.status !== 401 || !originalRequest || originalRequest._retry || isRefreshCall) {
         return Promise.reject(error);
       }
 

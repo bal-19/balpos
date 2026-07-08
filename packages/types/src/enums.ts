@@ -9,3 +9,6 @@ export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 export const PAYMENT_STATUSES = ["PENDING", "PAID", "FAILED", "REFUNDED"] as const;
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
+
+export const KITCHEN_ITEM_STATUSES = ["NEW", "PREPARING", "READY"] as const;
+export type KitchenItemStatus = (typeof KITCHEN_ITEM_STATUSES)[number];

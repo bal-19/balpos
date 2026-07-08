@@ -7,6 +7,10 @@ export async function getPublicTheme(_req: Request, res: Response) {
   ok(res, await storeSettingService.getPublicTheme());
 }
 
+export async function getPublicOutletInfo(_req: Request, res: Response) {
+  ok(res, await storeSettingService.getPublicOutletInfo());
+}
+
 export async function getStoreSetting(req: Request, res: Response) {
   ok(res, await storeSettingService.getStoreSetting(req.user!.outletId));
 }

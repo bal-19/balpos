@@ -1,6 +1,7 @@
 import type { OrderType as PrismaOrderType } from "@prisma/client";
 import { getIO } from "../../../core/socket.js";
-import { toOrderDto } from "../dto/order.dto.js";
+import { createPendingPayment } from "../../payment/service/payment.service.js";
+import { toOrderDto, toPaymentDto } from "../dto/order.dto.js";
 import { emitOrderCreated } from "../events/order-created.event.js";
 import { createOrderTransaction, findStoreSettingForOutlet } from "../repository/order.repository.js";
 import type { CreateOrderInput } from "../schema/order.schema.js";
@@ -16,7 +17,7 @@ function generateOrderNumber(): string {
   return `ORD-${timestamp}-${random}`;
 }
 
-export async function createOrder(outletId: string, cashierId: string, input: CreateOrderInput) {
+export async function createOrder(outletId: string, cashierId: string | null, input: CreateOrderInput) {
   assertDineInHasTable(input);
   if (input.tableId) {
     await assertTableIsValid(outletId, input.tableId);
@@ -53,32 +54,50 @@ export async function createOrder(outletId: string, cashierId: string, input: Cr
   const serviceChargeAmount = round2(subtotal * (serviceChargePercent / 100));
   const totalAmount = round2(subtotal + taxAmount + serviceChargeAmount);
 
+  const isCash = input.paymentMethod === "CASH";
+
   const order = await createOrderTransaction({
     outletId,
     orderNumber: generateOrderNumber(),
     orderType: input.orderType as PrismaOrderType,
-    status: "COMPLETED",
+    status: isCash ? "COMPLETED" : "OPEN",
     tableId: input.tableId ?? null,
     customerName: input.customerName ?? null,
-    cashierId,
+    cashierId: cashierId ?? undefined,
     subtotal: subtotal.toFixed(2),
     taxAmount: taxAmount.toFixed(2),
     serviceChargeAmount: serviceChargeAmount.toFixed(2),
     totalAmount: totalAmount.toFixed(2),
-    completedAt: new Date(),
+    completedAt: isCash ? new Date() : null,
     items: { create: orderItems },
-    payments: {
-      create: {
-        method: "CASH",
-        status: "PAID",
-        amount: totalAmount.toFixed(2),
-        paidAt: new Date(),
-      },
-    },
+    ...(isCash
+      ? {
+          payments: {
+            create: {
+              method: "CASH",
+              status: "PAID",
+              amount: totalAmount.toFixed(2),
+              paidAt: new Date(),
+            },
+          },
+        }
+      : {}),
   });
 
   const dto = toOrderDto(order);
   emitOrderCreated(getIO(), outletId, dto);
 
-  return dto;
+  if (isCash) return dto;
+
+  const payment = await createPendingPayment(
+    {
+      id: order.id,
+      orderNumber: order.orderNumber,
+      totalAmount: order.totalAmount.toString(),
+      customerName: order.customerName,
+    },
+    input.paymentMethod,
+  );
+
+  return { ...dto, payments: [...dto.payments, toPaymentDto(payment)] };
 }

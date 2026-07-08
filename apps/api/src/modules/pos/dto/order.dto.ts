@@ -3,7 +3,7 @@ import type { Order, OrderItem, Payment } from "@prisma/client";
 
 export type OrderWithRelations = Order & { items: OrderItem[]; payments: Payment[] };
 
-function toOrderItemDto(item: OrderItem): OrderItemDto {
+export function toOrderItemDto(item: OrderItem): OrderItemDto {
   return {
     id: item.id,
     productId: item.productId,
@@ -12,15 +12,17 @@ function toOrderItemDto(item: OrderItem): OrderItemDto {
     quantity: item.quantity,
     notes: item.notes,
     subtotal: item.subtotal.toString(),
+    kitchenStatus: item.kitchenStatus,
   };
 }
 
-function toPaymentDto(payment: Payment): PaymentDto {
+export function toPaymentDto(payment: Payment): PaymentDto {
   return {
     id: payment.id,
     method: payment.method,
     status: payment.status,
     amount: payment.amount.toString(),
+    paymentUrl: payment.paymentUrl,
     paidAt: payment.paidAt ? payment.paidAt.toISOString() : null,
   };
 }

@@ -14,6 +14,27 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/dashboard",
       "port": 5173
+    },
+    {
+      "name": "kitchen-display",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/kitchen-display",
+      "port": 5174
+    },
+    {
+      "name": "customer-display",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/customer-display",
+      "port": 5175
+    },
+    {
+      "name": "ordering",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "apps/ordering",
+      "port": 5176
     }
   ]
 }

@@ -10,6 +10,7 @@ import { updateStoreSettingSchema } from "../schema/store-setting.schema.js";
 export const storeSettingRoutes = Router();
 
 storeSettingRoutes.get("/theme", asyncHandler(storeSettingController.getPublicTheme));
+storeSettingRoutes.get("/public", asyncHandler(storeSettingController.getPublicOutletInfo));
 
 storeSettingRoutes.get(
   "/store",

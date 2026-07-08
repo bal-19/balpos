@@ -1,4 +1,4 @@
-import type { OrderStatus, OrderType, PaymentMethod, PaymentStatus } from "./enums.js";
+import type { KitchenItemStatus, OrderStatus, OrderType, PaymentMethod, PaymentStatus } from "./enums.js";
 import type { PermissionCode } from "./permission.js";
 
 /**
@@ -37,6 +37,10 @@ export interface PublicTheme {
   primaryColor: string;
 }
 
+export interface PublicOutletInfo extends PublicTheme {
+  outletId: string;
+}
+
 export interface Category {
   id: string;
   outletId: string;
@@ -73,6 +77,7 @@ export interface OrderItem {
   quantity: number;
   notes: string | null;
   subtotal: string;
+  kitchenStatus: KitchenItemStatus;
 }
 
 export interface Payment {
@@ -80,6 +85,7 @@ export interface Payment {
   method: PaymentMethod;
   status: PaymentStatus;
   amount: string;
+  paymentUrl: string | null;
   paidAt: string | null;
 }
 
@@ -91,7 +97,7 @@ export interface Order {
   status: OrderStatus;
   tableId: string | null;
   customerName: string | null;
-  cashierId: string;
+  cashierId: string | null;
   subtotal: string;
   taxAmount: string;
   serviceChargeAmount: string;

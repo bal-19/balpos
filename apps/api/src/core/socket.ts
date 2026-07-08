@@ -17,6 +17,10 @@ export function createSocketServer(httpServer: HttpServer): SocketIOServer {
   io.on("connection", (socket) => {
     console.log(`[socket] connected: ${socket.id}`);
 
+    socket.on("join-outlet", (outletId: string) => {
+      socket.join(`outlet:${outletId}`);
+    });
+
     socket.on("disconnect", () => {
       console.log(`[socket] disconnected: ${socket.id}`);
     });

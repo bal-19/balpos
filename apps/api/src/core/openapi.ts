@@ -16,6 +16,9 @@ export const openApiDocument = {
     { name: "settings", description: "Store settings, theme, category & product catalog" },
     { name: "pos", description: "POS ordering (tables, orders)" },
     { name: "dashboard", description: "Dashboard overview & report aggregation" },
+    { name: "kitchen", description: "Kitchen Display System — order aktif & status masak" },
+    { name: "ordering", description: "QR Table Ordering — publik, tanpa auth" },
+    { name: "payment", description: "Payment gateway (Xendit) webhook" },
   ],
   paths: {
     "/auth/login": {
@@ -84,6 +87,24 @@ export const openApiDocument = {
     },
     "/dashboard/recent-transactions": {
       get: { tags: ["dashboard"], summary: "Transaksi terbaru", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/kitchen/orders": {
+      get: { tags: ["kitchen"], summary: "Order aktif hari ini (belum semua item READY)", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/kitchen/order-items/{id}/status": {
+      patch: { tags: ["kitchen"], summary: "Update status masak item (NEW/PREPARING/READY)", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/ordering/context/{tableId}": {
+      get: { tags: ["ordering"], summary: "Menu publik + info meja untuk landing QR", responses: { "200": { description: "OK" }, "404": { description: "Not Found" } } },
+    },
+    "/ordering/orders/{tableId}": {
+      post: { tags: ["ordering"], summary: "Buat order self-service (selalu non-CASH via Xendit)", responses: { "201": { description: "Created" } } },
+    },
+    "/ordering/orders/{orderId}/status": {
+      get: { tags: ["ordering"], summary: "Polling status order + pembayaran", responses: { "200": { description: "OK" } } },
+    },
+    "/payments/webhook/xendit": {
+      post: { tags: ["payment"], summary: "Callback Xendit (verifikasi x-callback-token)", responses: { "200": { description: "OK" }, "401": { description: "Unauthorized" } } },
     },
   },
   components: {
