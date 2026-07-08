@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: var(--brand-primary, #2c4a3b);
+  --color-primary-foreground: var(--brand-primary-fg, #f5f3ea);
+  --color-surface: #f5f3ea;
+}

@@ -2,6 +2,8 @@ import type { Server as HttpServer } from "node:http";
 import { Server as SocketIOServer } from "socket.io";
 import { env } from "../config/env.js";
 
+let ioInstance: SocketIOServer | undefined;
+
 /**
  * Socket.IO server generik. Event & room per outlet/tenant didefinisikan
  * di masing-masing module (`modules/<name>/events/`) — lihat
@@ -20,5 +22,14 @@ export function createSocketServer(httpServer: HttpServer): SocketIOServer {
     });
   });
 
+  ioInstance = io;
   return io;
+}
+
+/** Dipakai service module lain (mis. pos/order) untuk emit event tanpa import core/server.ts langsung. */
+export function getIO(): SocketIOServer {
+  if (!ioInstance) {
+    throw new Error("Socket.IO belum diinisialisasi — pastikan createSocketServer() sudah dipanggil");
+  }
+  return ioInstance;
 }

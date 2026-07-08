@@ -8,6 +8,268 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Models ditambahkan bertahap per module mulai Phase 1 (lihat docs/11-data-model.md
-// dan docs/13-roadmap.md). Schema ini baru persiapan koneksi — migration belum
-// dijalankan (`prisma migrate dev` menyusul saat model pertama ditambahkan).
+enum OrderType {
+  DINE_IN
+  TAKE_AWAY
+  ORDER_ONLINE
+}
+
+enum OrderStatus {
+  OPEN
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  QRIS
+  DEBIT_CREDIT
+  E_WALLET
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  outlets Outlet[]
+  roles   Role[]
+  users   User[]
+
+  @@map("tenants")
+}
+
+model Outlet {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  address   String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant     Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  users      User[]
+  setting    StoreSetting?
+  categories Category[]
+  products   Product[]
+  tables     Table[]
+  orders     Order[]
+
+  @@index([tenantId])
+  @@map("outlets")
+}
+
+model Role {
+  id        String   @id @default(cuid())
+  tenantId  String
+  code      String
+  name      String
+  isSystem  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  users       User[]
+  permissions RolePermission[]
+
+  @@unique([tenantId, code])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  module      String
+  description String?
+  createdAt   DateTime @default(now())
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String   @id @default(cuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  tenantId     String
+  outletId     String
+  roleId       String
+  name         String
+  email        String    @unique
+  passwordHash String
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tenant Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  outlet Outlet  @relation(fields: [outletId], references: [id], onDelete: Cascade)
+  role   Role    @relation(fields: [roleId], references: [id])
+  orders Order[] @relation("OrderCashier")
+
+  @@index([outletId])
+  @@index([roleId])
+  @@map("users")
+}
+
+model StoreSetting {
+  id                   String   @id @default(cuid())
+  outletId             String   @unique
+  storeName            String
+  logoUrl              String?
+  primaryColor         String   @default("#2C4A3B")
+  taxPercent           Decimal  @default(0) @db.Decimal(5, 2)
+  serviceChargePercent Decimal  @default(0) @db.Decimal(5, 2)
+  currency             String   @default("IDR")
+  address              String?
+  phone                String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  outlet Outlet @relation(fields: [outletId], references: [id], onDelete: Cascade)
+
+  @@map("store_settings")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  outletId  String
+  name      String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  outlet   Outlet    @relation(fields: [outletId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([outletId, name])
+  @@index([outletId])
+  @@map("categories")
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  outletId    String
+  categoryId  String
+  name        String
+  description String?
+  price       Decimal   @db.Decimal(12, 2)
+  imageUrl    String?
+  isAvailable Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  outlet     Outlet      @relation(fields: [outletId], references: [id], onDelete: Cascade)
+  category   Category    @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+
+  @@index([outletId])
+  @@index([categoryId])
+  @@map("products")
+}
+
+model Table {
+  id        String   @id @default(cuid())
+  outletId  String
+  name      String
+  capacity  Int?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  outlet Outlet  @relation(fields: [outletId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@unique([outletId, name])
+  @@map("tables")
+}
+
+model Order {
+  id                  String      @id @default(cuid())
+  outletId            String
+  orderNumber         String
+  orderType           OrderType
+  status              OrderStatus @default(OPEN)
+  tableId             String?
+  customerName        String?
+  cashierId           String
+  subtotal            Decimal     @db.Decimal(12, 2)
+  taxAmount           Decimal     @default(0) @db.Decimal(12, 2)
+  serviceChargeAmount Decimal     @default(0) @db.Decimal(12, 2)
+  discountAmount      Decimal     @default(0) @db.Decimal(12, 2)
+  totalAmount         Decimal     @db.Decimal(12, 2)
+  notes               String?
+  completedAt         DateTime?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  outlet   Outlet      @relation(fields: [outletId], references: [id], onDelete: Cascade)
+  table    Table?      @relation(fields: [tableId], references: [id])
+  cashier  User        @relation("OrderCashier", fields: [cashierId], references: [id])
+  items    OrderItem[]
+  payments Payment[]
+
+  @@unique([outletId, orderNumber])
+  @@index([outletId, createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id                  String   @id @default(cuid())
+  orderId             String
+  productId           String
+  productNameSnapshot String
+  unitPrice           Decimal  @db.Decimal(12, 2)
+  quantity            Int
+  notes               String?
+  subtotal            Decimal  @db.Decimal(12, 2)
+  createdAt           DateTime @default(now())
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  orderId         String
+  method          PaymentMethod
+  status          PaymentStatus @default(PENDING)
+  amount          Decimal       @db.Decimal(12, 2)
+  referenceNumber String?
+  paidAt          DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("payments")
+}

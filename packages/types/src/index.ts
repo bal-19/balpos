@@ -1,6 +1,8 @@
 /**
  * Shared type contracts between apps/api and all frontend apps.
- * Entity types (User, Order, Product, Customer, Reservation, Promotion, dst.)
- * ditambahkan per module saat implementasi fitur — lihat docs/11-data-model.md.
  */
-export {};
+export * from "./permission.js";
+export * from "./enums.js";
+export * from "./entities.js";
+export * from "./dashboard.js";
+export * from "./api-envelope.js";

@@ -11,7 +11,7 @@ export async function startServer() {
   createSocketServer(httpServer);
 
   await prisma.$connect();
-  redis.on("error", (err) => console.error("[redis] connection error", err));
+  redis.on("error", (err: Error) => console.error("[redis] connection error", err));
 
   httpServer.listen(env.PORT, () => {
     console.log(`[api] listening on http://localhost:${env.PORT}`);
