@@ -12,3 +12,9 @@ export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 
 export const KITCHEN_ITEM_STATUSES = ["NEW", "PREPARING", "READY"] as const;
 export type KitchenItemStatus = (typeof KITCHEN_ITEM_STATUSES)[number];
+
+export const STOCK_MOVEMENT_TYPES = ["IN", "OUT", "ADJUSTMENT"] as const;
+export type StockMovementType = (typeof STOCK_MOVEMENT_TYPES)[number];
+
+export const PURCHASE_ORDER_STATUSES = ["DRAFT", "ORDERED", "RECEIVED", "CANCELLED"] as const;
+export type PurchaseOrderStatus = (typeof PURCHASE_ORDER_STATUSES)[number];

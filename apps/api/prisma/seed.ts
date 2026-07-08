@@ -13,8 +13,33 @@ const PERMISSIONS = [
   { code: "pos.order.create", module: "pos", description: "Buat order/checkout" },
   { code: "kitchen.view", module: "kitchen", description: "Lihat order aktif di Kitchen Display" },
   { code: "kitchen.manage", module: "kitchen", description: "Update status masak item order" },
+  { code: "inventory.view", module: "inventory", description: "Lihat stok bahan baku" },
+  { code: "inventory.manage", module: "inventory", description: "Kelola stok bahan baku" },
+  { code: "recipe.view", module: "recipe", description: "Lihat resep produk" },
+  { code: "recipe.manage", module: "recipe", description: "Kelola resep produk" },
+  { code: "supplier.view", module: "supplier", description: "Lihat supplier & purchase order" },
+  { code: "supplier.manage", module: "supplier", description: "Kelola supplier & purchase order" },
   { code: "role.manage", module: "auth", description: "Kelola role & permission (cadangan, belum dipakai UI)" },
 ] as const;
+
+const STOCK_ITEMS = [
+  { name: "Kopi Bubuk", unit: "gram", currentStock: "5000", minStockThreshold: "1000" },
+  { name: "Susu", unit: "ml", currentStock: "10000", minStockThreshold: "2000" },
+  { name: "Gula", unit: "gram", currentStock: "300", minStockThreshold: "500" },
+] as const;
+
+/** productName -> daftar bahan baku (stockItemName + quantity) sesuai satuan StockItem di atas. */
+const RECIPES: Record<string, { stockItemName: string; quantity: string }[]> = {
+  Espresso: [{ stockItemName: "Kopi Bubuk", quantity: "18" }],
+  Cappuccino: [
+    { stockItemName: "Kopi Bubuk", quantity: "18" },
+    { stockItemName: "Susu", quantity: "150" },
+  ],
+  Latte: [
+    { stockItemName: "Kopi Bubuk", quantity: "18" },
+    { stockItemName: "Susu", quantity: "200" },
+  ],
+};
 
 const CATALOG: Record<string, { name: string; price: string }[]> = {
   Coffee: [
@@ -186,6 +211,54 @@ async function main() {
         });
       }
     }
+  }
+
+  const stockItemByName = new Map<string, { id: string }>();
+  for (const stockItem of STOCK_ITEMS) {
+    const created = await prisma.stockItem.upsert({
+      where: { outletId_name: { outletId: outlet.id, name: stockItem.name } },
+      update: {},
+      create: { ...stockItem, outletId: outlet.id },
+    });
+    stockItemByName.set(stockItem.name, created);
+  }
+
+  for (const [productName, ingredients] of Object.entries(RECIPES)) {
+    const product = await prisma.product.findFirst({
+      where: { outletId: outlet.id, name: productName },
+    });
+    if (!product) continue;
+
+    const recipe = await prisma.recipe.upsert({
+      where: { productId: product.id },
+      update: {},
+      create: { productId: product.id, outletId: outlet.id },
+    });
+
+    for (const ingredient of ingredients) {
+      const stockItem = stockItemByName.get(ingredient.stockItemName);
+      if (!stockItem) continue;
+
+      await prisma.recipeIngredient.upsert({
+        where: { recipeId_stockItemId: { recipeId: recipe.id, stockItemId: stockItem.id } },
+        update: { quantity: ingredient.quantity },
+        create: { recipeId: recipe.id, stockItemId: stockItem.id, quantity: ingredient.quantity },
+      });
+    }
+  }
+
+  const supplier = await prisma.supplier.findFirst({
+    where: { outletId: outlet.id, name: "Sumber Kopi Nusantara" },
+  });
+  if (!supplier) {
+    await prisma.supplier.create({
+      data: {
+        outletId: outlet.id,
+        name: "Sumber Kopi Nusantara",
+        phone: "0812-3456-7890",
+        address: "Jl. Raya Kopi No. 1, Bandung",
+      },
+    });
   }
 
   const tableNames = ["T1", "T2", "T3", "T4", "T5", "T6"];

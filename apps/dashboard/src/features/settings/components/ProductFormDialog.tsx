@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Dialog, DialogContent, Input } from "@restaurant-pos/ui";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { RecipeSection } from "../../recipe/components/RecipeSection";
 import { useCategories } from "../hooks/useCategories";
 import { useProductMutations } from "../hooks/useProducts";
 import { productFormSchema, type ProductFormValues } from "../types/settings.types";
@@ -85,6 +86,8 @@ export function ProductFormDialog({
           <Button type="submit" disabled={create.isPending || update.isPending}>
             Simpan
           </Button>
+
+          {product && <RecipeSection productId={product.id} />}
         </form>
       </DialogContent>
     </Dialog>

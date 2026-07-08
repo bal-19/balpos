@@ -19,6 +19,9 @@ export const openApiDocument = {
     { name: "kitchen", description: "Kitchen Display System — order aktif & status masak" },
     { name: "ordering", description: "QR Table Ordering — publik, tanpa auth" },
     { name: "payment", description: "Payment gateway (Xendit) webhook" },
+    { name: "inventory", description: "Stok bahan baku & stock movement" },
+    { name: "recipe", description: "Resep produk (bahan baku per menu)" },
+    { name: "supplier", description: "Supplier & Purchase Order" },
   ],
   paths: {
     "/auth/login": {
@@ -105,6 +108,28 @@ export const openApiDocument = {
     },
     "/payments/webhook/xendit": {
       post: { tags: ["payment"], summary: "Callback Xendit (verifikasi x-callback-token)", responses: { "200": { description: "OK" }, "401": { description: "Unauthorized" } } },
+    },
+    "/inventory/stock-items": {
+      get: { tags: ["inventory"], summary: "List stok bahan baku", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      post: { tags: ["inventory"], summary: "Tambah bahan baku", security: [{ bearerAuth: [] }], responses: { "201": { description: "Created" } } },
+    },
+    "/inventory/stock-items/{id}/adjust": {
+      post: { tags: ["inventory"], summary: "Sesuaikan stok manual (IN/OUT/ADJUSTMENT)", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/recipe/products/{productId}": {
+      get: { tags: ["recipe"], summary: "Lihat resep produk", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      put: { tags: ["recipe"], summary: "Ganti seluruh ingredient resep produk", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/supplier/suppliers": {
+      get: { tags: ["supplier"], summary: "List supplier", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      post: { tags: ["supplier"], summary: "Buat supplier", security: [{ bearerAuth: [] }], responses: { "201": { description: "Created" } } },
+    },
+    "/supplier/purchase-orders": {
+      get: { tags: ["supplier"], summary: "List purchase order", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      post: { tags: ["supplier"], summary: "Buat purchase order", security: [{ bearerAuth: [] }], responses: { "201": { description: "Created" } } },
+    },
+    "/supplier/purchase-orders/{id}/receive": {
+      patch: { tags: ["supplier"], summary: "Terima barang (increment stok + StockMovement IN)", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
     },
   },
   components: {

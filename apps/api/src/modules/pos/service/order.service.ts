@@ -1,5 +1,6 @@
 import type { OrderType as PrismaOrderType } from "@prisma/client";
 import { getIO } from "../../../core/socket.js";
+import { assertStockAvailableForOrder } from "../../inventory/service/stock.service.js";
 import { createPendingPayment } from "../../payment/service/payment.service.js";
 import { toOrderDto, toPaymentDto } from "../dto/order.dto.js";
 import { emitOrderCreated } from "../events/order-created.event.js";
@@ -26,6 +27,10 @@ export async function createOrder(outletId: string, cashierId: string | null, in
   const productIds = input.items.map((item) => item.productId);
   const products = await assertProductsAvailable(outletId, productIds);
   const productMap = new Map(products.map((product) => [product.id, product]));
+
+  await assertStockAvailableForOrder(
+    input.items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+  );
 
   let subtotal = 0;
   const orderItems = input.items.map((item) => {
@@ -56,33 +61,37 @@ export async function createOrder(outletId: string, cashierId: string | null, in
 
   const isCash = input.paymentMethod === "CASH";
 
-  const order = await createOrderTransaction({
-    outletId,
-    orderNumber: generateOrderNumber(),
-    orderType: input.orderType as PrismaOrderType,
-    status: isCash ? "COMPLETED" : "OPEN",
-    tableId: input.tableId ?? null,
-    customerName: input.customerName ?? null,
-    cashierId: cashierId ?? undefined,
-    subtotal: subtotal.toFixed(2),
-    taxAmount: taxAmount.toFixed(2),
-    serviceChargeAmount: serviceChargeAmount.toFixed(2),
-    totalAmount: totalAmount.toFixed(2),
-    completedAt: isCash ? new Date() : null,
-    items: { create: orderItems },
-    ...(isCash
-      ? {
-          payments: {
-            create: {
-              method: "CASH",
-              status: "PAID",
-              amount: totalAmount.toFixed(2),
-              paidAt: new Date(),
+  const order = await createOrderTransaction(
+    {
+      outletId,
+      orderNumber: generateOrderNumber(),
+      orderType: input.orderType as PrismaOrderType,
+      status: isCash ? "COMPLETED" : "OPEN",
+      tableId: input.tableId ?? null,
+      customerName: input.customerName ?? null,
+      cashierId: cashierId ?? undefined,
+      subtotal: subtotal.toFixed(2),
+      taxAmount: taxAmount.toFixed(2),
+      serviceChargeAmount: serviceChargeAmount.toFixed(2),
+      totalAmount: totalAmount.toFixed(2),
+      completedAt: isCash ? new Date() : null,
+      items: { create: orderItems },
+      ...(isCash
+        ? {
+            payments: {
+              create: {
+                method: "CASH",
+                status: "PAID",
+                amount: totalAmount.toFixed(2),
+                paidAt: new Date(),
+              },
             },
-          },
-        }
-      : {}),
-  });
+          }
+        : {}),
+    },
+    outletId,
+    input.items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+  );
 
   const dto = toOrderDto(order);
   emitOrderCreated(getIO(), outletId, dto);

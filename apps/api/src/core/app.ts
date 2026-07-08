@@ -6,11 +6,14 @@ import helmet from "helmet";
 import { env } from "../config/env.js";
 import { authRoutes } from "../modules/auth/routes/auth.routes.js";
 import { dashboardRoutes } from "../modules/dashboard/routes/dashboard.routes.js";
+import { inventoryRoutes } from "../modules/inventory/routes/stock-item.routes.js";
 import { kitchenRoutes } from "../modules/kitchen/routes/kitchen.routes.js";
 import { orderingRoutes } from "../modules/ordering/routes/ordering.routes.js";
 import { paymentRoutes } from "../modules/payment/routes/payment.routes.js";
 import { posRoutes } from "../modules/pos/routes/pos.routes.js";
+import { recipeRoutes } from "../modules/recipe/routes/recipe.routes.js";
 import { settingsRoutes } from "../modules/settings/routes/settings.routes.js";
+import { supplierRoutes } from "../modules/supplier/routes/supplier.routes.js";
 import { errorHandler } from "../shared/middlewares/error-handler.js";
 import { notFoundHandler } from "../shared/middlewares/not-found.js";
 import { openApiDocument } from "./openapi.js";
@@ -45,6 +48,9 @@ export function createApp(): Express {
   app.use("/api/payments", paymentRoutes);
   app.use("/api/kitchen", kitchenRoutes);
   app.use("/api/ordering", orderingRoutes);
+  app.use("/api/inventory", inventoryRoutes);
+  app.use("/api/recipe", recipeRoutes);
+  app.use("/api/supplier", supplierRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

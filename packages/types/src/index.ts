@@ -8,3 +8,6 @@ export * from "./dashboard.js";
 export * from "./api-envelope.js";
 export * from "./ordering.js";
 export * from "./kitchen.js";
+export * from "./inventory.js";
+export * from "./recipe.js";
+export * from "./supplier.js";
