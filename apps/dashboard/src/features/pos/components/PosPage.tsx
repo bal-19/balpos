@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useCategories } from "../hooks/useCategories";
+import { useCurrentShift } from "../hooks/useShift";
 import { CartPanel } from "./CartPanel";
 import { CategoryTabs } from "./CategoryTabs";
 import { ProductGrid } from "./ProductGrid";
 import { ShiftStatusBar } from "./ShiftStatusBar";
 
 export function PosPage() {
+    const { data: shift, isLoading: isShiftLoading } = useCurrentShift();
     const { data: categories } = useCategories();
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
@@ -14,6 +16,18 @@ export function PosPage() {
             setSelectedCategoryId(categories[0]!.id);
         }
     }, [categories, selectedCategoryId]);
+
+    if (isShiftLoading) {
+        return <p className="text-sm text-black/40">Memuat status shift...</p>;
+    }
+
+    if (!shift) {
+        return (
+            <div className="flex flex-col gap-4">
+                <ShiftStatusBar />
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col gap-4">

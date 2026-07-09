@@ -1,6 +1,6 @@
 import * as RadixDialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
 import { cn } from "../lib/cn.js";
 
 export const Dialog = RadixDialog.Root;
@@ -13,7 +13,7 @@ export function DialogContent({
 }: {
   className?: string;
   children: ReactNode;
-  title: string;
+  title?: string;
 }) {
   return (
     <RadixDialog.Portal>
@@ -24,14 +24,28 @@ export function DialogContent({
           className,
         )}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <RadixDialog.Title className="text-base font-semibold">{title}</RadixDialog.Title>
-          <RadixDialog.Close className="rounded-full p-1 hover:bg-black/5">
+        {title ? (
+          <div className="mb-4 flex items-center justify-between">
+            <RadixDialog.Title className="text-base font-semibold">{title}</RadixDialog.Title>
+            <RadixDialog.Close className="rounded-full p-1 hover:bg-black/5">
+              <X size={16} />
+            </RadixDialog.Close>
+          </div>
+        ) : (
+          <RadixDialog.Close className="absolute right-4 top-4 rounded-full p-1 hover:bg-black/5">
             <X size={16} />
           </RadixDialog.Close>
-        </div>
+        )}
         {children}
       </RadixDialog.Content>
     </RadixDialog.Portal>
   );
+}
+
+export function DialogHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("mb-4 flex flex-col gap-1 pr-6", className)} {...props} />;
+}
+
+export function DialogTitle({ className, ...props }: ComponentProps<typeof RadixDialog.Title>) {
+  return <RadixDialog.Title className={cn("text-base font-semibold", className)} {...props} />;
 }
