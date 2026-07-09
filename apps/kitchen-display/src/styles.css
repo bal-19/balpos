@@ -1,1 +1,68 @@
 @import "@restaurant-pos/ui/styles.css";
+
+/* KDS — font override: Geist */
+body {
+  font-family: "Geist", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Material Symbols Outlined — baseline alignment */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 20px;
+  line-height: 1;
+  user-select: none;
+}
+
+/* KDS Board column — scrollable vertically */
+.kds-column {
+  min-height: calc(100vh - 200px);
+}
+
+/* KDS card — subtle tactical depth, smooth press feedback */
+.kds-card {
+  box-shadow: 0px 4px 20px rgba(2, 36, 29, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.kds-card:active {
+  transform: scale(0.985);
+}
+
+/* Sage-tinted inner stroke for order cards */
+.inner-stroke {
+  border: 1px solid rgba(2, 36, 29, 0.1);
+}
+
+/* Urgent order — pulsing red border for orders overdue */
+@keyframes urgent-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(186, 26, 26, 0.25); }
+  70%  { box-shadow: 0 0 0 8px rgba(186, 26, 26, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(186, 26, 26, 0); }
+}
+.urgent-border {
+  animation: urgent-pulse 2s infinite;
+  border: 2px solid #ba1a1a !important;
+}
+
+/* Smooth pulse dot for live indicator */
+@keyframes live-ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+.live-ping {
+  animation: live-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Scrollbar hide (for KDS column overflow-y) */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
