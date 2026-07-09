@@ -28,6 +28,7 @@ export const PERMISSION_CODES = {
   ANALYTICS_MANAGE: "analytics.manage",
   POS_SHIFT_VIEW: "pos.shift.view",
   POS_SHIFT_MANAGE: "pos.shift.manage",
+  NOTIFICATION_VIEW: "notification.view",
 } as const;
 
 export type PermissionCode = (typeof PERMISSION_CODES)[keyof typeof PERMISSION_CODES];

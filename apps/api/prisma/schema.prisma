@@ -123,6 +123,12 @@ enum ShiftStatus {
   CLOSED
 }
 
+enum NotificationType {
+  ORDER_CREATED
+  ORDER_READY
+  LOW_STOCK
+}
+
 model Tenant {
   id        String   @id @default(cuid())
   name      String
@@ -165,6 +171,7 @@ model Outlet {
   aiInsights       AiInsight[]
   reportExportJobs ReportExportJob[]
   shifts           Shift[]
+  notifications    Notification[]
 
   @@index([tenantId])
   @@map("outlets")
@@ -248,6 +255,7 @@ model StoreSetting {
   currency             String   @default("IDR")
   address              String?
   phone                String?
+  receiptFooterNote    String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
@@ -369,6 +377,7 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+  @@index([orderId, kitchenStatus])
   @@map("order_items")
 }
 
@@ -704,4 +713,21 @@ model Shift {
 
   @@index([outletId, status])
   @@map("shifts")
+}
+
+model Notification {
+  id            String           @id @default(cuid())
+  outletId      String
+  type          NotificationType
+  title         String
+  message       String
+  referenceType String?
+  referenceId   String?
+  isRead        Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+
+  outlet Outlet @relation(fields: [outletId], references: [id], onDelete: Cascade)
+
+  @@index([outletId, isRead, createdAt])
+  @@map("notifications")
 }

@@ -1,10 +1,11 @@
-import { type AnyRoute, createRoute } from "@tanstack/react-router";
-import { DashboardOverviewPage } from "../components/DashboardOverviewPage";
+import { type AnyRoute, createRoute, lazyRouteComponent } from "@tanstack/react-router";
 
 export function createDashboardRoute(parentRoute: AnyRoute) {
   return createRoute({
     getParentRoute: () => parentRoute,
     path: "/",
-    component: DashboardOverviewPage,
+    component: lazyRouteComponent(() =>
+      import("../components/DashboardOverviewPage").then((m) => ({ default: m.DashboardOverviewPage })),
+    ),
   });
 }

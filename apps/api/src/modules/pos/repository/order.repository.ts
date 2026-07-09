@@ -29,12 +29,12 @@ export function createOrderTransaction(
       include: { items: true, payments: true },
     });
 
-    await consumeStockForOrder(tx, outletId, order.id, stockItems);
+    const lowStockAlerts = await consumeStockForOrder(tx, outletId, order.id, stockItems);
 
     if (promotionUsage) {
       await recordPromotionUsage(tx, order.id, promotionUsage.promotionId, promotionUsage.discountAmount);
     }
 
-    return order;
+    return { order, lowStockAlerts };
   });
 }

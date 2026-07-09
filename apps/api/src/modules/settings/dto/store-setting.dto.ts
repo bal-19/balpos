@@ -13,6 +13,7 @@ export function toStoreSettingDto(setting: StoreSetting): StoreSettingDto {
     currency: setting.currency,
     address: setting.address,
     phone: setting.phone,
+    receiptFooterNote: setting.receiptFooterNote,
   };
 }
 

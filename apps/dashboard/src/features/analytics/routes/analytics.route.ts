@@ -1,7 +1,6 @@
 import { PERMISSION_CODES } from "@restaurant-pos/types";
-import { type AnyRoute, createRoute, redirect } from "@tanstack/react-router";
+import { type AnyRoute, createRoute, lazyRouteComponent, redirect } from "@tanstack/react-router";
 import { useAuthStore } from "../../../stores/auth.store";
-import { AnalyticsPage } from "../components/AnalyticsPage";
 
 export function createAnalyticsRoute(parentRoute: AnyRoute) {
   return createRoute({
@@ -12,6 +11,8 @@ export function createAnalyticsRoute(parentRoute: AnyRoute) {
         throw redirect({ to: "/" });
       }
     },
-    component: AnalyticsPage,
+    component: lazyRouteComponent(() =>
+      import("../components/AnalyticsPage").then((m) => ({ default: m.AnalyticsPage })),
+    ),
   });
 }

@@ -5,6 +5,7 @@ import type {
   SalesStatisticPoint,
   SalesStatisticResponse,
 } from "@restaurant-pos/types";
+import { getOrSetCache } from "../../../core/cache.js";
 import {
   findOrderItemsInRange,
   findRecentOrders,
@@ -13,28 +14,32 @@ import {
   getTopItemsPerformance,
 } from "../repository/dashboard.repository.js";
 
+const CACHE_TTL_SECONDS = 30;
+
 function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
 export async function getOverview(outletId: string): Promise<OverviewStats> {
-  const [aggregate, bestSeller] = await Promise.all([
-    getTodayOrderAggregate(outletId),
-    getTodayBestSeller(outletId),
-  ]);
+  return getOrSetCache(`dashboard:${outletId}:overview`, CACHE_TTL_SECONDS, async () => {
+    const [aggregate, bestSeller] = await Promise.all([
+      getTodayOrderAggregate(outletId),
+      getTodayBestSeller(outletId),
+    ]);
 
-  const totalRevenueToday = aggregate._sum.totalAmount?.toNumber() ?? 0;
-  const totalOrdersToday = aggregate._count._all;
-  const averageOrderValueToday = totalOrdersToday > 0 ? round2(totalRevenueToday / totalOrdersToday) : 0;
+    const totalRevenueToday = aggregate._sum.totalAmount?.toNumber() ?? 0;
+    const totalOrdersToday = aggregate._count._all;
+    const averageOrderValueToday = totalOrdersToday > 0 ? round2(totalRevenueToday / totalOrdersToday) : 0;
 
-  return {
-    totalRevenueToday: totalRevenueToday.toFixed(2),
-    totalOrdersToday,
-    averageOrderValueToday: averageOrderValueToday.toFixed(2),
-    bestSellerToday: bestSeller
-      ? { productName: bestSeller.productNameSnapshot, quantity: bestSeller._sum.quantity ?? 0 }
-      : null,
-  };
+    return {
+      totalRevenueToday: totalRevenueToday.toFixed(2),
+      totalOrdersToday,
+      averageOrderValueToday: averageOrderValueToday.toFixed(2),
+      bestSellerToday: bestSeller
+        ? { productName: bestSeller.productNameSnapshot, quantity: bestSeller._sum.quantity ?? 0 }
+        : null,
+    };
+  });
 }
 
 interface Bucket {
@@ -92,45 +97,49 @@ export async function getSalesStatistic(
   outletId: string,
   range: "day" | "month" | "year",
 ): Promise<SalesStatisticResponse> {
-  const buckets = buildBuckets(range);
-  const overallStart = buckets[0]!.start;
-  const overallEnd = buckets[buckets.length - 1]!.end;
+  return getOrSetCache(`dashboard:${outletId}:sales-statistic:${range}`, CACHE_TTL_SECONDS, async () => {
+    const buckets = buildBuckets(range);
+    const overallStart = buckets[0]!.start;
+    const overallEnd = buckets[buckets.length - 1]!.end;
 
-  const items = await findOrderItemsInRange(outletId, overallStart, overallEnd);
+    const items = await findOrderItemsInRange(outletId, overallStart, overallEnd);
 
-  const categorySet = new Set<string>();
-  const data: SalesStatisticPoint[] = buckets.map((bucket) => ({ label: bucket.label }));
+    const categorySet = new Set<string>();
+    const data: SalesStatisticPoint[] = buckets.map((bucket) => ({ label: bucket.label }));
 
-  for (const item of items) {
-    const categoryName = item.product.category?.name ?? "Lainnya";
-    categorySet.add(categoryName);
+    for (const item of items) {
+      const categoryName = item.product.category?.name ?? "Lainnya";
+      categorySet.add(categoryName);
 
-    const bucketIndex = buckets.findIndex(
-      (bucket) => item.order.createdAt >= bucket.start && item.order.createdAt < bucket.end,
-    );
-    if (bucketIndex === -1) continue;
+      const bucketIndex = buckets.findIndex(
+        (bucket) => item.order.createdAt >= bucket.start && item.order.createdAt < bucket.end,
+      );
+      if (bucketIndex === -1) continue;
 
-    const point = data[bucketIndex]!;
-    const current = typeof point[categoryName] === "number" ? (point[categoryName] as number) : 0;
-    point[categoryName] = round2(current + item.subtotal.toNumber());
-  }
-
-  const categories = Array.from(categorySet);
-  for (const point of data) {
-    for (const categoryName of categories) {
-      if (!(categoryName in point)) point[categoryName] = 0;
+      const point = data[bucketIndex]!;
+      const current = typeof point[categoryName] === "number" ? (point[categoryName] as number) : 0;
+      point[categoryName] = round2(current + item.subtotal.toNumber());
     }
-  }
 
-  return { categories, data };
+    const categories = Array.from(categorySet);
+    for (const point of data) {
+      for (const categoryName of categories) {
+        if (!(categoryName in point)) point[categoryName] = 0;
+      }
+    }
+
+    return { categories, data };
+  });
 }
 
 export async function getItemsPerformance(outletId: string, limit: number): Promise<ItemPerformance[]> {
-  const since = new Date();
-  since.setDate(since.getDate() - 30);
+  return getOrSetCache(`dashboard:${outletId}:items-performance:${limit}`, CACHE_TTL_SECONDS, async () => {
+    const since = new Date();
+    since.setDate(since.getDate() - 30);
 
-  const grouped = await getTopItemsPerformance(outletId, since, limit);
-  return grouped.map((row) => ({ name: row.productNameSnapshot, quantity: row._sum.quantity ?? 0 }));
+    const grouped = await getTopItemsPerformance(outletId, since, limit);
+    return grouped.map((row) => ({ name: row.productNameSnapshot, quantity: row._sum.quantity ?? 0 }));
+  });
 }
 
 export async function getRecentTransactions(outletId: string, limit: number): Promise<RecentTransaction[]> {

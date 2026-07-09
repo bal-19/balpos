@@ -9,6 +9,7 @@ export const storeSettingFormSchema = z.object({
   currency: z.string().min(1, "Mata uang wajib diisi"),
   taxPercent: decimalString,
   serviceChargePercent: decimalString,
+  receiptFooterNote: z.string().max(300, "Maksimal 300 karakter").optional().nullable(),
 });
 export type StoreSettingFormValues = z.infer<typeof storeSettingFormSchema>;
 

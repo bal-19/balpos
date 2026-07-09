@@ -1,7 +1,8 @@
 import { Button, Input } from "@restaurant-pos/ui";
-import { formatCurrencyIDR } from "@restaurant-pos/utils";
+import { buildReceiptHtml, formatCurrencyIDR, openPrintWindow } from "@restaurant-pos/utils";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
+import { useStoreSetting } from "../../settings/hooks/useStoreSetting";
 import { usePosCartStore } from "../../../stores/pos-cart.store";
 import { useCreateOrder } from "../hooks/useCreateOrder";
 import { useCurrentShift } from "../hooks/useShift";
@@ -19,6 +20,7 @@ export function CartPanel() {
 
     const { data: tables } = useTables();
     const { data: currentShift } = useCurrentShift();
+    const { data: storeSetting } = useStoreSetting();
     const createOrder = useCreateOrder();
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -39,6 +41,41 @@ export function CartPanel() {
             {
                 onSuccess: (order) => {
                     setSuccessMessage(`Order ${order.orderNumber} berhasil dibuat!`);
+
+                    const isPaidCash = order.payments.some(
+                        (payment) => payment.method === "CASH" && payment.status === "PAID",
+                    );
+                    if (isPaidCash && storeSetting) {
+                        const table = tables?.find((t) => t.id === order.tableId);
+                        const html = buildReceiptHtml(
+                            {
+                                orderNumber: order.orderNumber,
+                                orderType: order.orderType,
+                                tableName: table?.name ?? null,
+                                customerName: order.customerName,
+                                items: order.items.map((item) => ({
+                                    productNameSnapshot: item.productNameSnapshot,
+                                    quantity: item.quantity,
+                                    subtotal: item.subtotal,
+                                    notes: item.notes,
+                                })),
+                                subtotal: order.subtotal,
+                                taxAmount: order.taxAmount,
+                                serviceChargeAmount: order.serviceChargeAmount,
+                                discountAmount: order.discountAmount,
+                                totalAmount: order.totalAmount,
+                                paymentMethod: "CASH",
+                                createdAt: order.createdAt,
+                            },
+                            {
+                                storeName: storeSetting.storeName,
+                                address: storeSetting.address,
+                                phone: storeSetting.phone,
+                                receiptFooterNote: storeSetting.receiptFooterNote,
+                            },
+                        );
+                        openPrintWindow(html);
+                    }
                 },
             },
         );

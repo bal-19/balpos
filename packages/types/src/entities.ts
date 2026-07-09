@@ -36,6 +36,7 @@ export interface StoreSetting {
   currency: string;
   address: string | null;
   phone: string | null;
+  receiptFooterNote: string | null;
 }
 
 export interface PublicTheme {

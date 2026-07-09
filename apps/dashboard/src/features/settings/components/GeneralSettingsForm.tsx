@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input } from "@restaurant-pos/ui";
+import { Button, Input, Textarea } from "@restaurant-pos/ui";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
@@ -35,6 +35,7 @@ export function GeneralSettingsForm() {
         currency: storeSetting.currency,
         taxPercent: storeSetting.taxPercent,
         serviceChargePercent: storeSetting.serviceChargePercent,
+        receiptFooterNote: storeSetting.receiptFooterNote ?? "",
       });
     }
   }, [storeSetting, reset]);
@@ -64,6 +65,9 @@ export function GeneralSettingsForm() {
       </Field>
       <Field label="Service Charge (%)" error={errors.serviceChargePercent?.message}>
         <Input {...register("serviceChargePercent")} />
+      </Field>
+      <Field label="Catatan Footer Struk" error={errors.receiptFooterNote?.message}>
+        <Textarea rows={3} placeholder="Terima kasih atas kunjungan Anda!" {...register("receiptFooterNote")} />
       </Field>
       <Button type="submit" disabled={updateMutation.isPending} className="w-fit">
         {updateMutation.isPending ? "Menyimpan..." : "Simpan"}

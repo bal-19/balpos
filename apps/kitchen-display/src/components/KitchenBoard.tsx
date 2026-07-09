@@ -4,11 +4,28 @@ import type {
   KitchenOrder,
   KitchenOrderItem,
 } from "@restaurant-pos/types";
+import { buildKitchenTicketHtml, openPrintWindow } from "@restaurant-pos/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { apiClient } from "../lib/api-client";
 import { getAuthState, setAuthState } from "../lib/auth";
+
+function printKitchenTicket(order: KitchenOrder): void {
+  const html = buildKitchenTicketHtml({
+    orderNumber: order.orderNumber,
+    orderType: order.orderType,
+    tableName: order.tableName,
+    customerName: order.customerName,
+    createdAt: order.createdAt,
+    items: order.items.map((item) => ({
+      productNameSnapshot: item.productNameSnapshot,
+      quantity: item.quantity,
+      notes: item.notes,
+    })),
+  });
+  openPrintWindow(html);
+}
 
 // ---------------------------------------------------------------------------
 // Status flow & helpers
@@ -138,7 +155,7 @@ function OrderCard({ order, column, onAdvanceAll, processing }: OrderCardProps) 
             {order.customerName ? ` • ${order.customerName}` : ""}
           </p>
         </div>
-        <div className="text-right shrink-0">
+        <div className="text-right shrink-0 flex flex-col items-end gap-1">
           <span
             className={`font-bold text-base tabular-nums ${
               urgent && column !== "READY"
@@ -153,6 +170,14 @@ function OrderCard({ order, column, onAdvanceAll, processing }: OrderCardProps) 
           <p className="text-[10px] text-black/40 uppercase tracking-widest">
             {column === "PREPARING" ? "TIMER" : "ELAPSED"}
           </p>
+          <button
+            type="button"
+            onClick={() => printKitchenTicket(order)}
+            className="text-black/30 hover:text-primary hover:bg-black/5 rounded p-1 transition-colors"
+            title="Cetak Ulang Tiket"
+          >
+            <Icon name="print" className="text-[16px]" />
+          </button>
         </div>
       </div>
 

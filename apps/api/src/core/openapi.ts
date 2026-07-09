@@ -57,6 +57,10 @@ export const openApiDocument = {
             description: "Riwayat aktivitas pengguna (audit log)",
         },
         { name: "ai", description: "AI Analytics — insight berbasis Gemini" },
+        {
+            name: "notification",
+            description: "Notifikasi realtime (order baru, order siap, stok menipis)",
+        },
     ],
     paths: {
         "/auth/login": {
@@ -583,6 +587,30 @@ export const openApiDocument = {
                     "200": { description: "OK (cached)" },
                     "202": { description: "Accepted (queued)" },
                 },
+            },
+        },
+        "/notifications": {
+            get: {
+                tags: ["notification"],
+                summary: "List notifikasi outlet (dengan unreadCount)",
+                security: [{ bearerAuth: [] }],
+                responses: { "200": { description: "OK" } },
+            },
+        },
+        "/notifications/{id}/read": {
+            patch: {
+                tags: ["notification"],
+                summary: "Tandai 1 notifikasi sudah dibaca",
+                security: [{ bearerAuth: [] }],
+                responses: { "200": { description: "OK" } },
+            },
+        },
+        "/notifications/read-all": {
+            patch: {
+                tags: ["notification"],
+                summary: "Tandai semua notifikasi outlet sudah dibaca",
+                security: [{ bearerAuth: [] }],
+                responses: { "200": { description: "OK" } },
             },
         },
     },

@@ -5,6 +5,7 @@ import { findCustomerById } from "../../crm/repository/customer.repository.js";
 import { earnPointsForOrder } from "../../crm/service/point.service.js";
 import { assertStockAvailableForOrder } from "../../inventory/service/stock.service.js";
 import { createPendingPayment } from "../../payment/service/payment.service.js";
+import { publishNotification } from "../../notification/service/notification.service.js";
 import { resolvePromotionForOrder } from "../../promotion/service/promotion.service.js";
 import { toOrderDto, toPaymentDto } from "../dto/order.dto.js";
 import { emitOrderCreated } from "../events/order-created.event.js";
@@ -83,7 +84,7 @@ export async function createOrder(outletId: string, cashierId: string | null, in
 
   const isCash = input.paymentMethod === "CASH";
 
-  const order = await createOrderTransaction(
+  const { order, lowStockAlerts } = await createOrderTransaction(
     {
       outletId,
       orderNumber: generateOrderNumber(),
@@ -123,6 +124,19 @@ export async function createOrder(outletId: string, cashierId: string | null, in
 
   const dto = toOrderDto(order);
   emitOrderCreated(getIO(), outletId, dto);
+  await publishNotification(outletId, "ORDER_CREATED", "Order Baru", `Order ${dto.orderNumber} dibuat`, {
+    referenceType: "ORDER",
+    referenceId: order.id,
+  });
+  for (const stockItem of lowStockAlerts) {
+    await publishNotification(
+      outletId,
+      "LOW_STOCK",
+      "Stok Menipis",
+      `${stockItem.name} tersisa ${stockItem.currentStock.toString()} ${stockItem.unit}`,
+      { referenceType: "STOCK_ITEM", referenceId: stockItem.id },
+    );
+  }
 
   if (isCash) {
     if (input.customerId) await earnPointsForOrder(input.customerId, order.id, totalAmount);

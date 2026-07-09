@@ -17,6 +17,7 @@ export const updateStoreSettingSchema = z.object({
   currency: z.string().min(1).default("IDR"),
   address: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
+  receiptFooterNote: z.string().max(300, "Catatan footer maksimal 300 karakter").nullable().optional(),
 });
 
 export type UpdateStoreSettingInput = z.infer<typeof updateStoreSettingSchema>;

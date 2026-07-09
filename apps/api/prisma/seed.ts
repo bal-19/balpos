@@ -33,6 +33,7 @@ const PERMISSIONS = [
   { code: "analytics.manage", module: "ai", description: "Minta pembuatan insight AI baru" },
   { code: "pos.shift.view", module: "pos", description: "Lihat status sesi kasir yang sedang berjalan" },
   { code: "pos.shift.manage", module: "pos", description: "Buka & tutup sesi kasir" },
+  { code: "notification.view", module: "notification", description: "Lihat & tandai baca notifikasi" },
 ] as const;
 
 const STOCK_ITEMS = [
@@ -124,6 +125,7 @@ async function main() {
     "pos.order.create",
     "pos.shift.view",
     "pos.shift.manage",
+    "notification.view",
     "crm.view",
     "promotion.view",
     "reservation.view",

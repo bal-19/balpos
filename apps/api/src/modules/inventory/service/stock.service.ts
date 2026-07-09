@@ -92,18 +92,25 @@ export async function assertStockAvailableForOrder(items: { productId: string; q
   }
 }
 
-/** Dipanggil di dalam transaksi order `modules/pos` — decrement stok + catat movement. */
+/**
+ * Dipanggil di dalam transaksi order `modules/pos` — decrement stok + catat movement.
+ * Return daftar stock item yang jatuh di bawah minStockThreshold (untuk notifikasi LOW_STOCK
+ * yang dipicu oleh caller SETELAH transaksi commit — publishNotification pakai koneksi
+ * Prisma terpisah dari `tx`, jadi tidak boleh dipanggil selagi transaksi masih berjalan).
+ */
 export async function consumeStockForOrder(
   tx: Prisma.TransactionClient,
   outletId: string,
   orderId: string,
   items: { productId: string; quantity: number }[],
-) {
+): Promise<StockItem[]> {
+  const lowStockAlerts: StockItem[] = [];
+
   for (const item of items) {
     const ingredients = await getIngredientsForProduct(item.productId, tx);
     for (const ingredient of ingredients) {
       const needed = (ingredient.quantity.toNumber() * item.quantity).toString();
-      await decrementStock(tx, ingredient.stockItemId, needed);
+      const updated = await decrementStock(tx, ingredient.stockItemId, needed);
       await createMovement(tx, {
         outletId,
         stockItemId: ingredient.stockItemId,
@@ -112,8 +119,13 @@ export async function consumeStockForOrder(
         referenceType: "ORDER",
         referenceId: orderId,
       });
+      if (updated.currentStock.lessThan(updated.minStockThreshold)) {
+        lowStockAlerts.push(updated);
+      }
     }
   }
+
+  return lowStockAlerts;
 }
 
 /** Dipanggil `modules/supplier` saat Purchase Order ditandai diterima. */

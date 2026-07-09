@@ -4,7 +4,7 @@ import { closeShift, fetchCurrentShift, openShift } from "../services/pos.servic
 
 export function useCurrentShift() {
   const queryClient = useQueryClient();
-  const query = useQuery({ queryKey: ["pos", "shift", "current"], queryFn: fetchCurrentShift });
+  const query = useQuery({ queryKey: ["pos", "shift", "current"], queryFn: fetchCurrentShift, staleTime: 0 });
 
   useSocketEvent("pos:shift.updated", () => {
     queryClient.invalidateQueries({ queryKey: ["pos", "shift", "current"] });

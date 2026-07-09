@@ -68,3 +68,6 @@ export type AiInsightSource = (typeof AI_INSIGHT_SOURCES)[number];
 
 export const SHIFT_STATUSES = ["OPEN", "CLOSED"] as const;
 export type ShiftStatus = (typeof SHIFT_STATUSES)[number];
+
+export const NOTIFICATION_TYPES = ["ORDER_CREATED", "ORDER_READY", "LOW_STOCK"] as const;
+export type NotificationType = (typeof NOTIFICATION_TYPES)[number];

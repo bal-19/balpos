@@ -15,6 +15,7 @@ export interface UpdateStoreSettingPayload {
   currency: string;
   address?: string | null;
   phone?: string | null;
+  receiptFooterNote?: string | null;
 }
 
 export async function updateStoreSetting(payload: UpdateStoreSettingPayload) {

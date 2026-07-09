@@ -1,9 +1,7 @@
 import { PERMISSION_CODES } from "@restaurant-pos/types";
-import { type AnyRoute, createRoute, redirect } from "@tanstack/react-router";
+import { type AnyRoute, createRoute, lazyRouteComponent, redirect } from "@tanstack/react-router";
 import { useAuthStore } from "../../../stores/auth.store";
-import { ExportHistoryPage } from "../components/ExportHistoryPage";
 import { ReportLayout } from "../components/ReportLayout";
-import { ReportSummaryPage } from "../components/ReportSummaryPage";
 
 export function createReportRoute(parentRoute: AnyRoute) {
   return createRoute({
@@ -29,9 +27,21 @@ export function createReportIndexRoute(parentRoute: AnyRoute) {
 }
 
 export function createReportSummaryRoute(parentRoute: AnyRoute) {
-  return createRoute({ getParentRoute: () => parentRoute, path: "/summary", component: ReportSummaryPage });
+  return createRoute({
+    getParentRoute: () => parentRoute,
+    path: "/summary",
+    component: lazyRouteComponent(() =>
+      import("../components/ReportSummaryPage").then((m) => ({ default: m.ReportSummaryPage })),
+    ),
+  });
 }
 
 export function createReportExportsRoute(parentRoute: AnyRoute) {
-  return createRoute({ getParentRoute: () => parentRoute, path: "/exports", component: ExportHistoryPage });
+  return createRoute({
+    getParentRoute: () => parentRoute,
+    path: "/exports",
+    component: lazyRouteComponent(() =>
+      import("../components/ExportHistoryPage").then((m) => ({ default: m.ExportHistoryPage })),
+    ),
+  });
 }

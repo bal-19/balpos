@@ -11,6 +11,7 @@ import { crmRoutes } from "../modules/crm/routes/crm.routes.js";
 import { dashboardRoutes } from "../modules/dashboard/routes/dashboard.routes.js";
 import { inventoryRoutes } from "../modules/inventory/routes/stock-item.routes.js";
 import { kitchenRoutes } from "../modules/kitchen/routes/kitchen.routes.js";
+import { notificationRoutes } from "../modules/notification/routes/notification.routes.js";
 import { orderingRoutes } from "../modules/ordering/routes/ordering.routes.js";
 import { paymentRoutes } from "../modules/payment/routes/payment.routes.js";
 import { posRoutes } from "../modules/pos/routes/pos.routes.js";
@@ -65,6 +66,7 @@ export function createApp(): Express {
   app.use("/api/report", reportRoutes);
   app.use("/api/audit-log", auditLogRoutes);
   app.use("/api/ai", aiRoutes);
+  app.use("/api/notifications", notificationRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

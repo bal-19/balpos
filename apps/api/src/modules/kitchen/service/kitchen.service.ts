@@ -1,6 +1,7 @@
 import type { KitchenItemStatus, KitchenOrder } from "@restaurant-pos/types";
 import { getIO } from "../../../core/socket.js";
 import { NotFoundError } from "../../../shared/errors/app-error.js";
+import { publishNotification } from "../../notification/service/notification.service.js";
 import {
   countNonReadyItems,
   findActiveOrders,
@@ -48,6 +49,10 @@ export async function updateItemStatus(itemId: string, status: KitchenItemStatus
     const remaining = await countNonReadyItems(item.orderId);
     if (remaining === 0) {
       io.to(`outlet:${item.order.outletId}`).emit("kitchen:ready", { orderId: item.orderId });
+      await publishNotification(item.order.outletId, "ORDER_READY", "Order Siap", "Order siap disajikan", {
+        referenceType: "ORDER",
+        referenceId: item.orderId,
+      });
     }
   }
 
