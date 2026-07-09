@@ -1,4 +1,6 @@
 import { Outlet, createRootRoute, createRoute, createRouter, redirect } from "@tanstack/react-router";
+import { createAnalyticsRoute } from "./features/analytics/routes/analytics.route";
+import { createAuditLogRoute } from "./features/audit-log/routes/audit-log.route";
 import { createLoginRoute } from "./features/auth/routes/login.route";
 import {
   createCrmIndexRoute,
@@ -10,6 +12,12 @@ import { createDashboardRoute } from "./features/dashboard/routes/dashboard.rout
 import { createInventoryRoute } from "./features/inventory/routes/inventory.route";
 import { createPosRoute } from "./features/pos/routes/pos.route";
 import { createPromotionRoute } from "./features/promotion/routes/promotion.route";
+import {
+  createReportExportsRoute,
+  createReportIndexRoute,
+  createReportRoute,
+  createReportSummaryRoute,
+} from "./features/report/routes/report.route";
 import { createReservationRoute } from "./features/reservation/routes/reservation.route";
 import {
   createSettingsCategoriesRoute,
@@ -67,6 +75,14 @@ const membershipTierListRoute = createMembershipTierListRoute(crmRoute);
 const promotionRoute = createPromotionRoute(appLayoutRoute);
 const reservationRoute = createReservationRoute(appLayoutRoute);
 
+const reportRoute = createReportRoute(appLayoutRoute);
+const reportIndexRoute = createReportIndexRoute(reportRoute);
+const reportSummaryRoute = createReportSummaryRoute(reportRoute);
+const reportExportsRoute = createReportExportsRoute(reportRoute);
+
+const auditLogRoute = createAuditLogRoute(appLayoutRoute);
+const analyticsRoute = createAnalyticsRoute(appLayoutRoute);
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
   appLayoutRoute.addChildren([
@@ -83,6 +99,9 @@ const routeTree = rootRoute.addChildren([
     crmRoute.addChildren([crmIndexRoute, customerListRoute, membershipTierListRoute]),
     promotionRoute,
     reservationRoute,
+    reportRoute.addChildren([reportIndexRoute, reportSummaryRoute, reportExportsRoute]),
+    auditLogRoute,
+    analyticsRoute,
   ]),
 ]);
 

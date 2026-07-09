@@ -1,4 +1,4 @@
-import type { ApiSuccessEnvelope, Category, Order, OrderType, Product, Table } from "@restaurant-pos/types";
+import type { ApiSuccessEnvelope, Category, Order, OrderType, Product, Shift, Table } from "@restaurant-pos/types";
 import { apiClient } from "../../../services/api-client";
 
 export async function fetchCategories() {
@@ -27,5 +27,20 @@ export interface CreateOrderPayload {
 
 export async function createOrder(payload: CreateOrderPayload) {
   const { data } = await apiClient.post<ApiSuccessEnvelope<Order>>("/api/pos/orders", payload);
+  return data.data;
+}
+
+export async function fetchCurrentShift() {
+  const { data } = await apiClient.get<ApiSuccessEnvelope<Shift | null>>("/api/pos/shifts/current");
+  return data.data;
+}
+
+export async function openShift(payload: { openingBalance: string }) {
+  const { data } = await apiClient.post<ApiSuccessEnvelope<Shift>>("/api/pos/shifts/open", payload);
+  return data.data;
+}
+
+export async function closeShift(payload: { closingBalance: string; notes?: string | null }) {
+  const { data } = await apiClient.post<ApiSuccessEnvelope<Shift>>("/api/pos/shifts/close", payload);
   return data.data;
 }

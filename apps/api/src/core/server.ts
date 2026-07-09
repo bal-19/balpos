@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { env } from "../config/env.js";
 import { prisma } from "../database/prisma.js";
 import { createApp } from "./app.js";
+import { startWorkers, stopWorkers } from "./queue.js";
 import { redis } from "./redis.js";
 import { createSocketServer } from "./socket.js";
 
@@ -12,6 +13,7 @@ export async function startServer() {
 
   await prisma.$connect();
   redis.on("error", (err: Error) => console.error("[redis] connection error", err));
+  startWorkers();
 
   httpServer.listen(env.PORT, () => {
     console.log(`[api] listening on http://localhost:${env.PORT}`);
@@ -21,6 +23,7 @@ export async function startServer() {
   const shutdown = async () => {
     console.log("[api] shutting down...");
     httpServer.close();
+    await stopWorkers();
     await prisma.$disconnect();
     redis.disconnect();
     process.exit(0);

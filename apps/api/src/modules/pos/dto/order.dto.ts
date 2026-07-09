@@ -38,6 +38,7 @@ export function toOrderDto(order: OrderWithRelations): OrderDto {
     customerId: order.customerId,
     customerName: order.customerName,
     cashierId: order.cashierId,
+    shiftId: order.shiftId,
     subtotal: order.subtotal.toString(),
     taxAmount: order.taxAmount.toString(),
     serviceChargeAmount: order.serviceChargeAmount.toString(),

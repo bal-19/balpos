@@ -107,6 +107,7 @@ export interface Order {
   customerId: string | null;
   customerName: string | null;
   cashierId: string | null;
+  shiftId: string | null;
   subtotal: string;
   taxAmount: string;
   serviceChargeAmount: string;

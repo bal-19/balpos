@@ -86,6 +86,43 @@ enum PointHistoryType {
   ADJUSTMENT
 }
 
+enum ReportType {
+  SALES_SUMMARY
+  ITEMS_PERFORMANCE
+  TRANSACTIONS
+}
+
+enum ExportFileType {
+  PDF
+  EXCEL
+}
+
+enum ExportJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AiInsightType {
+  BEST_SELLING_MENU
+  BUSIEST_HOURS
+  RESTOCK_PREDICTION
+  DECLINING_PRODUCTS
+  SALES_SUMMARY
+  BUSINESS_IMPROVEMENT
+}
+
+enum AiInsightSource {
+  GEMINI
+  LOCAL
+}
+
+enum ShiftStatus {
+  OPEN
+  CLOSED
+}
+
 model Tenant {
   id        String   @id @default(cuid())
   name      String
@@ -124,6 +161,10 @@ model Outlet {
   membershipTiers MembershipTier[]
   promotions      Promotion[]
   reservations    Reservation[]
+  auditLogs        AuditLog[]
+  aiInsights       AiInsight[]
+  reportExportJobs ReportExportJob[]
+  shifts           Shift[]
 
   @@index([tenantId])
   @@map("outlets")
@@ -188,6 +229,8 @@ model User {
   outlet Outlet  @relation(fields: [outletId], references: [id], onDelete: Cascade)
   role   Role    @relation(fields: [roleId], references: [id])
   orders Order[] @relation("OrderCashier")
+  shiftsOpened Shift[] @relation("ShiftOpenedBy")
+  shiftsClosed Shift[] @relation("ShiftClosedBy")
 
   @@index([outletId])
   @@index([roleId])
@@ -292,16 +335,20 @@ model Order {
   createdAt           DateTime    @default(now())
   updatedAt           DateTime    @updatedAt
 
+  shiftId             String?
+
   outlet     Outlet           @relation(fields: [outletId], references: [id], onDelete: Cascade)
   table      Table?           @relation(fields: [tableId], references: [id])
   customer   Customer?        @relation(fields: [customerId], references: [id])
   cashier    User?            @relation("OrderCashier", fields: [cashierId], references: [id])
+  shift      Shift?           @relation(fields: [shiftId], references: [id])
   items      OrderItem[]
   payments   Payment[]
   promotions OrderPromotion[]
 
   @@unique([outletId, orderNumber])
   @@index([outletId, createdAt])
+  @@index([shiftId])
   @@map("orders")
 }
 
@@ -577,4 +624,84 @@ model Reservation {
   @@index([outletId])
   @@index([tableId])
   @@map("reservations")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  tenantId    String
+  outletId    String
+  userId      String
+  userName    String
+  method      String
+  path        String
+  statusCode  Int
+  requestBody Json?
+  createdAt   DateTime @default(now())
+
+  outlet Outlet @relation(fields: [outletId], references: [id], onDelete: Cascade)
+
+  @@index([outletId, createdAt])
+  @@index([userId])
+  @@map("audit_logs")
+}
+
+model AiInsight {
+  id          String          @id @default(cuid())
+  outletId    String
+  type        AiInsightType
+  source      AiInsightSource
+  periodFrom  DateTime?
+  periodTo    DateTime?
+  content     String          @db.Text
+  metadata    Json?
+  requestedBy String
+  createdAt   DateTime        @default(now())
+
+  outlet Outlet @relation(fields: [outletId], references: [id], onDelete: Cascade)
+
+  @@index([outletId, type, createdAt])
+  @@map("ai_insights")
+}
+
+model ReportExportJob {
+  id            String          @id @default(cuid())
+  outletId      String
+  reportType    ReportType
+  fileType      ExportFileType
+  status        ExportJobStatus @default(PENDING)
+  periodFrom    DateTime
+  periodTo      DateTime
+  fileUrl       String?
+  failureReason String?
+  requestedBy   String
+  createdAt     DateTime        @default(now())
+  completedAt   DateTime?
+
+  outlet Outlet @relation(fields: [outletId], references: [id], onDelete: Cascade)
+
+  @@index([outletId, createdAt])
+  @@map("report_export_jobs")
+}
+
+model Shift {
+  id              String      @id @default(cuid())
+  outletId        String
+  openedBy        String
+  closedBy        String?
+  openingBalance  Decimal     @db.Decimal(12, 2)
+  closingBalance  Decimal?    @db.Decimal(12, 2)
+  expectedBalance Decimal?    @db.Decimal(12, 2)
+  variance        Decimal?    @db.Decimal(12, 2)
+  status          ShiftStatus @default(OPEN)
+  notes           String?
+  openedAt        DateTime    @default(now())
+  closedAt        DateTime?
+
+  outlet       Outlet  @relation(fields: [outletId], references: [id], onDelete: Cascade)
+  openedByUser User    @relation("ShiftOpenedBy", fields: [openedBy], references: [id])
+  closedByUser User?   @relation("ShiftClosedBy", fields: [closedBy], references: [id])
+  orders       Order[]
+
+  @@index([outletId, status])
+  @@map("shifts")
 }

@@ -14,3 +14,4 @@ export {
   TableCell,
 } from "./components/table.js";
 export { Dialog, DialogTrigger, DialogContent } from "./components/dialog.js";
+export { DateRangePicker, type DateRangePickerProps, type DateRange } from "./components/date-range-picker.js";

@@ -14,3 +14,7 @@ export * from "./supplier.js";
 export * from "./crm.js";
 export * from "./promotion.js";
 export * from "./reservation.js";
+export * from "./report.js";
+export * from "./audit-log.js";
+export * from "./ai-insight.js";
+export * from "./shift.js";

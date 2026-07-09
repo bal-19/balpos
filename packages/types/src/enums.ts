@@ -40,3 +40,31 @@ export type TableStatus = (typeof TABLE_STATUSES)[number];
 
 export const POINT_HISTORY_TYPES = ["EARN", "REDEEM", "ADJUSTMENT"] as const;
 export type PointHistoryType = (typeof POINT_HISTORY_TYPES)[number];
+
+export const REPORT_TYPES = ["SALES_SUMMARY", "ITEMS_PERFORMANCE", "TRANSACTIONS"] as const;
+export type ReportType = (typeof REPORT_TYPES)[number];
+
+export const REPORT_FILTERS = ["DAILY", "WEEKLY", "MONTHLY", "CUSTOM"] as const;
+export type ReportFilter = (typeof REPORT_FILTERS)[number];
+
+export const EXPORT_FILE_TYPES = ["PDF", "EXCEL"] as const;
+export type ExportFileType = (typeof EXPORT_FILE_TYPES)[number];
+
+export const EXPORT_JOB_STATUSES = ["PENDING", "PROCESSING", "COMPLETED", "FAILED"] as const;
+export type ExportJobStatus = (typeof EXPORT_JOB_STATUSES)[number];
+
+export const AI_INSIGHT_TYPES = [
+  "BEST_SELLING_MENU",
+  "BUSIEST_HOURS",
+  "RESTOCK_PREDICTION",
+  "DECLINING_PRODUCTS",
+  "SALES_SUMMARY",
+  "BUSINESS_IMPROVEMENT",
+] as const;
+export type AiInsightType = (typeof AI_INSIGHT_TYPES)[number];
+
+export const AI_INSIGHT_SOURCES = ["GEMINI", "LOCAL"] as const;
+export type AiInsightSource = (typeof AI_INSIGHT_SOURCES)[number];
+
+export const SHIFT_STATUSES = ["OPEN", "CLOSED"] as const;
+export type ShiftStatus = (typeof SHIFT_STATUSES)[number];

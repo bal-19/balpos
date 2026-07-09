@@ -4,6 +4,8 @@ import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
 import { env } from "../config/env.js";
+import { aiRoutes } from "../modules/ai/routes/ai.routes.js";
+import { auditLogRoutes } from "../modules/audit-log/routes/audit-log.routes.js";
 import { authRoutes } from "../modules/auth/routes/auth.routes.js";
 import { crmRoutes } from "../modules/crm/routes/crm.routes.js";
 import { dashboardRoutes } from "../modules/dashboard/routes/dashboard.routes.js";
@@ -14,9 +16,11 @@ import { paymentRoutes } from "../modules/payment/routes/payment.routes.js";
 import { posRoutes } from "../modules/pos/routes/pos.routes.js";
 import { promotionRoutes } from "../modules/promotion/routes/promotion.routes.js";
 import { recipeRoutes } from "../modules/recipe/routes/recipe.routes.js";
+import { reportRoutes } from "../modules/report/routes/report.routes.js";
 import { reservationRoutes } from "../modules/reservation/routes/reservation.routes.js";
 import { settingsRoutes } from "../modules/settings/routes/settings.routes.js";
 import { supplierRoutes } from "../modules/supplier/routes/supplier.routes.js";
+import { auditLogMiddleware } from "../shared/middlewares/audit-log.middleware.js";
 import { errorHandler } from "../shared/middlewares/error-handler.js";
 import { notFoundHandler } from "../shared/middlewares/not-found.js";
 import { openApiDocument } from "./openapi.js";
@@ -29,6 +33,7 @@ export function createApp(): Express {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
+  app.use(auditLogMiddleware);
 
   app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
@@ -57,6 +62,9 @@ export function createApp(): Express {
   app.use("/api/crm", crmRoutes);
   app.use("/api/promotion", promotionRoutes);
   app.use("/api/reservation", reservationRoutes);
+  app.use("/api/report", reportRoutes);
+  app.use("/api/audit-log", auditLogRoutes);
+  app.use("/api/ai", aiRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

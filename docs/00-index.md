@@ -17,6 +17,7 @@ Dokumentasi ini merupakan hasil breakdown dari project overview Restaurant POS &
 11. [Data Model / ERD Draft](./11-data-model.md)
 12. [Development Principles](./12-development-principles.md)
 13. [Roadmap Pengembangan](./13-roadmap.md)
+14. [Shift Management (Session Kasir)](./14-shift-management.md)
 
 ## Status
 

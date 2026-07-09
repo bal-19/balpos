@@ -26,6 +26,13 @@ const PERMISSIONS = [
   { code: "reservation.view", module: "reservation", description: "Lihat jadwal reservasi meja" },
   { code: "reservation.manage", module: "reservation", description: "Kelola reservasi meja (booking, check-in, batal)" },
   { code: "role.manage", module: "auth", description: "Kelola role & permission (cadangan, belum dipakai UI)" },
+  { code: "report.view", module: "report", description: "Lihat ringkasan laporan & riwayat export" },
+  { code: "report.manage", module: "report", description: "Buat export laporan PDF/Excel" },
+  { code: "audit-log.view", module: "audit-log", description: "Lihat riwayat aktivitas pengguna" },
+  { code: "analytics.view", module: "ai", description: "Lihat insight AI yang sudah dibuat" },
+  { code: "analytics.manage", module: "ai", description: "Minta pembuatan insight AI baru" },
+  { code: "pos.shift.view", module: "pos", description: "Lihat status sesi kasir yang sedang berjalan" },
+  { code: "pos.shift.manage", module: "pos", description: "Buka & tutup sesi kasir" },
 ] as const;
 
 const STOCK_ITEMS = [
@@ -115,6 +122,8 @@ async function main() {
     "catalog.view",
     "pos.table.view",
     "pos.order.create",
+    "pos.shift.view",
+    "pos.shift.manage",
     "crm.view",
     "promotion.view",
     "reservation.view",

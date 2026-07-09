@@ -34,9 +34,19 @@ export function findOrderItemsInRange(outletId: string, start: Date, end: Date) 
     where: { order: { outletId, status: "COMPLETED", createdAt: { gte: start, lt: end } } },
     select: {
       subtotal: true,
+      quantity: true,
+      productNameSnapshot: true,
       order: { select: { createdAt: true } },
       product: { select: { category: { select: { name: true } } } },
     },
+  });
+}
+
+export function getOrderAggregateInRange(outletId: string, start: Date, end: Date) {
+  return prisma.order.aggregate({
+    where: { outletId, status: "COMPLETED", createdAt: { gte: start, lt: end } },
+    _sum: { totalAmount: true },
+    _count: { _all: true },
   });
 }
 

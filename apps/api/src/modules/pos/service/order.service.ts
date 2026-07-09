@@ -10,6 +10,7 @@ import { toOrderDto, toPaymentDto } from "../dto/order.dto.js";
 import { emitOrderCreated } from "../events/order-created.event.js";
 import { createOrderTransaction, findStoreSettingForOutlet } from "../repository/order.repository.js";
 import type { CreateOrderInput } from "../schema/order.schema.js";
+import { assertActiveShiftId } from "./shift.service.js";
 import { assertDineInHasTable, assertProductsAvailable, assertTableIsValid } from "../validators/order.validator.js";
 
 function round2(value: number): number {
@@ -23,6 +24,7 @@ function generateOrderNumber(): string {
 }
 
 export async function createOrder(outletId: string, cashierId: string | null, input: CreateOrderInput) {
+  const shiftId = await assertActiveShiftId(outletId);
   assertDineInHasTable(input);
   if (input.tableId) {
     await assertTableIsValid(outletId, input.tableId);
@@ -91,6 +93,7 @@ export async function createOrder(outletId: string, cashierId: string | null, in
       customerId: input.customerId ?? null,
       customerName: input.customerName ?? null,
       cashierId: cashierId ?? undefined,
+      shiftId,
       subtotal: subtotal.toFixed(2),
       taxAmount: taxAmount.toFixed(2),
       serviceChargeAmount: serviceChargeAmount.toFixed(2),

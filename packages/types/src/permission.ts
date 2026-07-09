@@ -21,6 +21,13 @@ export const PERMISSION_CODES = {
   RESERVATION_VIEW: "reservation.view",
   RESERVATION_MANAGE: "reservation.manage",
   ROLE_MANAGE: "role.manage",
+  REPORT_VIEW: "report.view",
+  REPORT_MANAGE: "report.manage",
+  AUDIT_LOG_VIEW: "audit-log.view",
+  ANALYTICS_VIEW: "analytics.view",
+  ANALYTICS_MANAGE: "analytics.manage",
+  POS_SHIFT_VIEW: "pos.shift.view",
+  POS_SHIFT_MANAGE: "pos.shift.manage",
 } as const;
 
 export type PermissionCode = (typeof PERMISSION_CODES)[keyof typeof PERMISSION_CODES];
