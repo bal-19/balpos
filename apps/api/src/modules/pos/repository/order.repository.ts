@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../../database/prisma.js";
 import { consumeStockForOrder } from "../../inventory/service/stock.service.js";
+import { recordPromotionUsage } from "../../promotion/repository/promotion.repository.js";
 
 export function findAvailableProducts(outletId: string, ids: string[]) {
   return prisma.product.findMany({
@@ -20,6 +21,7 @@ export function createOrderTransaction(
   data: Prisma.OrderUncheckedCreateInput,
   outletId: string,
   stockItems: { productId: string; quantity: number }[],
+  promotionUsage?: { promotionId: string; discountAmount: string },
 ) {
   return prisma.$transaction(async (tx) => {
     const order = await tx.order.create({
@@ -28,6 +30,10 @@ export function createOrderTransaction(
     });
 
     await consumeStockForOrder(tx, outletId, order.id, stockItems);
+
+    if (promotionUsage) {
+      await recordPromotionUsage(tx, order.id, promotionUsage.promotionId, promotionUsage.discountAmount);
+    }
 
     return order;
   });

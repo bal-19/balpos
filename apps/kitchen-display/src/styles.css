@@ -1,5 +1,9 @@
 @import "@restaurant-pos/ui/styles.css";
 
+@theme {
+  --color-shadow-dark: rgba(2, 36, 29, 0.05);
+}
+
 /* KDS — font override: Geist */
 body {
   font-family: "Geist", sans-serif;
@@ -24,7 +28,7 @@ body {
 
 /* KDS card — subtle tactical depth, smooth press feedback */
 .kds-card {
-  box-shadow: 0px 4px 20px rgba(2, 36, 29, 0.05);
+  box-shadow: 0px 4px 20px var(--color-shadow-dark);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .kds-card:active {

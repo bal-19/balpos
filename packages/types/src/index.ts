@@ -11,3 +11,6 @@ export * from "./kitchen.js";
 export * from "./inventory.js";
 export * from "./recipe.js";
 export * from "./supplier.js";
+export * from "./crm.js";
+export * from "./promotion.js";
+export * from "./reservation.js";

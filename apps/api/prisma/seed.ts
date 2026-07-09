@@ -19,6 +19,12 @@ const PERMISSIONS = [
   { code: "recipe.manage", module: "recipe", description: "Kelola resep produk" },
   { code: "supplier.view", module: "supplier", description: "Lihat supplier & purchase order" },
   { code: "supplier.manage", module: "supplier", description: "Kelola supplier & purchase order" },
+  { code: "crm.view", module: "crm", description: "Lihat pelanggan, membership tier & riwayat poin" },
+  { code: "crm.manage", module: "crm", description: "Kelola pelanggan & membership tier" },
+  { code: "promotion.view", module: "promotion", description: "Lihat daftar promo" },
+  { code: "promotion.manage", module: "promotion", description: "Kelola promo (voucher/discount/happy hour/buy x get y)" },
+  { code: "reservation.view", module: "reservation", description: "Lihat jadwal reservasi meja" },
+  { code: "reservation.manage", module: "reservation", description: "Kelola reservasi meja (booking, check-in, batal)" },
   { code: "role.manage", module: "auth", description: "Kelola role & permission (cadangan, belum dipakai UI)" },
 ] as const;
 
@@ -105,7 +111,15 @@ async function main() {
     ),
   );
 
-  const cashierPermissionCodes = ["catalog.view", "pos.table.view", "pos.order.create"];
+  const cashierPermissionCodes = [
+    "catalog.view",
+    "pos.table.view",
+    "pos.order.create",
+    "crm.view",
+    "promotion.view",
+    "reservation.view",
+    "reservation.manage",
+  ];
   await Promise.all(
     permissions
       .filter((permission) => cashierPermissionCodes.includes(permission.code))

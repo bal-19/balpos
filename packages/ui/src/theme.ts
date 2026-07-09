@@ -22,3 +22,8 @@ export function applyBrandColor(hex: string) {
   document.documentElement.style.setProperty("--brand-primary", hex);
   document.documentElement.style.setProperty("--brand-primary-fg", getReadableForeground(hex));
 }
+
+/** Bootstrap global brand color (statis). Panggil dari app's main.tsx saat startup. */
+export function bootstrapTheme() {
+  applyBrandColor("#2C4A3B");
+}

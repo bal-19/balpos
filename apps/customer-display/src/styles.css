@@ -1,5 +1,25 @@
 @import "@restaurant-pos/ui/styles.css";
 
+@theme {
+  --color-page-bg: #faf9f5;
+  --color-page-text: #1b1c1a;
+  --color-surface-light: #efeeea;
+  --color-surface-lighter: #f4f4f0;
+  --color-border: #c1c8c4;
+  --color-footer-bg: #cde8df;
+  --color-note-bg: #dae8e4;
+  --color-note-text: #4b635c;
+  --color-qty-bg: #c7eade;
+  --color-qty-text: #02241d;
+  --color-badge-bg: #cae6dd;
+  --color-badge-text: #4f6861;
+  --color-dot-pattern: #07201a;
+  --color-shadow-dark: rgba(2, 36, 29, 0.04);
+  --color-shadow-modal: rgba(2, 36, 29, 0.08);
+  --color-scrollbar-track: #f4f4f0;
+  --color-scrollbar-thumb: #c1c8c4;
+}
+
 /* Customer Display — font Geist */
 body {
   font-family: "Geist", sans-serif;
@@ -19,17 +39,17 @@ body {
 
 /* Card shadow — subtle tactical depth */
 .card-shadow {
-  box-shadow: 0px 4px 20px rgba(2, 36, 29, 0.04);
+  box-shadow: 0px 4px 20px var(--color-shadow-dark);
 }
 
 /* Modal (summary) shadow */
 .modal-shadow {
-  box-shadow: 0px 12px 40px rgba(2, 36, 29, 0.08);
+  box-shadow: 0px 12px 40px var(--color-shadow-modal);
 }
 
 /* Sage-tinted inner stroke */
 .inner-stroke {
-  border: 1px solid #d4e2d9;
+  border: 1px solid var(--color-border);
 }
 
 /* Custom scrollbar for order list */
@@ -37,15 +57,15 @@ body {
   width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f4f4f0;
+  background: var(--color-scrollbar-track);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #c1c8c4;
+  background: var(--color-scrollbar-thumb);
   border-radius: 10px;
 }
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #c1c8c4 #f4f4f0;
+  scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
 }
 
 /* Fade-in for order items on first render */

@@ -5,13 +5,16 @@ import express, { type Express } from "express";
 import helmet from "helmet";
 import { env } from "../config/env.js";
 import { authRoutes } from "../modules/auth/routes/auth.routes.js";
+import { crmRoutes } from "../modules/crm/routes/crm.routes.js";
 import { dashboardRoutes } from "../modules/dashboard/routes/dashboard.routes.js";
 import { inventoryRoutes } from "../modules/inventory/routes/stock-item.routes.js";
 import { kitchenRoutes } from "../modules/kitchen/routes/kitchen.routes.js";
 import { orderingRoutes } from "../modules/ordering/routes/ordering.routes.js";
 import { paymentRoutes } from "../modules/payment/routes/payment.routes.js";
 import { posRoutes } from "../modules/pos/routes/pos.routes.js";
+import { promotionRoutes } from "../modules/promotion/routes/promotion.routes.js";
 import { recipeRoutes } from "../modules/recipe/routes/recipe.routes.js";
+import { reservationRoutes } from "../modules/reservation/routes/reservation.routes.js";
 import { settingsRoutes } from "../modules/settings/routes/settings.routes.js";
 import { supplierRoutes } from "../modules/supplier/routes/supplier.routes.js";
 import { errorHandler } from "../shared/middlewares/error-handler.js";
@@ -51,6 +54,9 @@ export function createApp(): Express {
   app.use("/api/inventory", inventoryRoutes);
   app.use("/api/recipe", recipeRoutes);
   app.use("/api/supplier", supplierRoutes);
+  app.use("/api/crm", crmRoutes);
+  app.use("/api/promotion", promotionRoutes);
+  app.use("/api/reservation", reservationRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

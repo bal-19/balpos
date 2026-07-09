@@ -5,7 +5,6 @@ import { CategoryTable } from "../components/CategoryTable";
 import { GeneralSettingsForm } from "../components/GeneralSettingsForm";
 import { ProductTable } from "../components/ProductTable";
 import { SettingsLayout } from "../components/SettingsLayout";
-import { ThemeColorPicker } from "../components/ThemeColorPicker";
 
 export function createSettingsRoute(parentRoute: AnyRoute) {
   return createRoute({
@@ -40,13 +39,6 @@ export function createSettingsGeneralRoute(parentRoute: AnyRoute) {
   });
 }
 
-export function createSettingsThemeRoute(parentRoute: AnyRoute) {
-  return createRoute({
-    getParentRoute: () => parentRoute,
-    path: "/theme",
-    component: ThemeColorPicker,
-  });
-}
 
 export function createSettingsCategoriesRoute(parentRoute: AnyRoute) {
   return createRoute({

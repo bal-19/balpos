@@ -24,6 +24,7 @@ export async function getOrderingContext(tableId: string): Promise<PublicOrderin
       name: table.name,
       capacity: table.capacity,
       isActive: table.isActive,
+      status: table.status,
     },
     categories: categories.map(toCategoryDto),
     products: products.map(toProductDto),

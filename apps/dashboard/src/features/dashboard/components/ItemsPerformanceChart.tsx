@@ -1,9 +1,14 @@
 import { Card, CardHeader, CardTitle } from "@restaurant-pos/ui";
+import { useMemo } from "react";
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer } from "recharts";
 import { useItemsPerformance } from "../hooks/useItemsPerformance";
 
 export function ItemsPerformanceChart() {
   const { data, isLoading } = useItemsPerformance(6);
+  const primaryColor = useMemo(() => {
+    if (typeof document === "undefined") return "#2C4A3B";
+    return getComputedStyle(document.documentElement).getPropertyValue("--brand-primary").trim() || "#2C4A3B";
+  }, []);
 
   return (
     <Card>
@@ -20,7 +25,7 @@ export function ItemsPerformanceChart() {
             <RadarChart data={data}>
               <PolarGrid />
               <PolarAngleAxis dataKey="name" tick={{ fontSize: 11 }} />
-              <Radar dataKey="quantity" stroke="#2C4A3B" fill="#2C4A3B" fillOpacity={0.4} />
+              <Radar dataKey="quantity" stroke={primaryColor} fill={primaryColor} fillOpacity={0.4} />
             </RadarChart>
           </ResponsiveContainer>
         )}

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Boxes, LayoutDashboard, Settings, ShoppingCart, Truck } from "lucide-react";
+import { Boxes, CalendarCheck, LayoutDashboard, Settings, ShoppingCart, Tag, Truck, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { useAuthStore } from "../stores/auth.store";
 
@@ -29,6 +29,15 @@ export function Sidebar() {
       )}
       {hasPermission("supplier.view") && (
         <NavItem to="/supplier/suppliers" icon={<Truck size={18} />} label="Supplier" />
+      )}
+      {hasPermission("crm.view") && (
+        <NavItem to="/crm/customers" icon={<Users size={18} />} label="CRM" />
+      )}
+      {hasPermission("promotion.view") && (
+        <NavItem to="/promotion" icon={<Tag size={18} />} label="Promo" />
+      )}
+      {hasPermission("reservation.view") && (
+        <NavItem to="/reservation" icon={<CalendarCheck size={18} />} label="Reservasi" />
       )}
       {hasPermission("settings.view") && (
         <NavItem to="/settings/general" icon={<Settings size={18} />} label="Settings" />

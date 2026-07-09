@@ -8,5 +8,6 @@ export function toTableDto(table: Table): TableDto {
     name: table.name,
     capacity: table.capacity,
     isActive: table.isActive,
+    status: table.status,
   };
 }

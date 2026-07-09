@@ -1,15 +1,22 @@
 import { Outlet, createRootRoute, createRoute, createRouter, redirect } from "@tanstack/react-router";
 import { createLoginRoute } from "./features/auth/routes/login.route";
+import {
+  createCrmIndexRoute,
+  createCrmRoute,
+  createCustomerListRoute,
+  createMembershipTierListRoute,
+} from "./features/crm/routes/crm.route";
 import { createDashboardRoute } from "./features/dashboard/routes/dashboard.route";
 import { createInventoryRoute } from "./features/inventory/routes/inventory.route";
 import { createPosRoute } from "./features/pos/routes/pos.route";
+import { createPromotionRoute } from "./features/promotion/routes/promotion.route";
+import { createReservationRoute } from "./features/reservation/routes/reservation.route";
 import {
   createSettingsCategoriesRoute,
   createSettingsGeneralRoute,
   createSettingsIndexRoute,
   createSettingsProductsRoute,
   createSettingsRoute,
-  createSettingsThemeRoute,
 } from "./features/settings/routes/settings.route";
 import {
   createPurchaseOrderListRoute,
@@ -44,7 +51,6 @@ const inventoryRoute = createInventoryRoute(appLayoutRoute);
 const settingsRoute = createSettingsRoute(appLayoutRoute);
 const settingsIndexRoute = createSettingsIndexRoute(settingsRoute);
 const settingsGeneralRoute = createSettingsGeneralRoute(settingsRoute);
-const settingsThemeRoute = createSettingsThemeRoute(settingsRoute);
 const settingsCategoriesRoute = createSettingsCategoriesRoute(settingsRoute);
 const settingsProductsRoute = createSettingsProductsRoute(settingsRoute);
 
@@ -52,6 +58,14 @@ const supplierRoute = createSupplierRoute(appLayoutRoute);
 const supplierIndexRoute = createSupplierIndexRoute(supplierRoute);
 const supplierListRoute = createSupplierListRoute(supplierRoute);
 const purchaseOrderListRoute = createPurchaseOrderListRoute(supplierRoute);
+
+const crmRoute = createCrmRoute(appLayoutRoute);
+const crmIndexRoute = createCrmIndexRoute(crmRoute);
+const customerListRoute = createCustomerListRoute(crmRoute);
+const membershipTierListRoute = createMembershipTierListRoute(crmRoute);
+
+const promotionRoute = createPromotionRoute(appLayoutRoute);
+const reservationRoute = createReservationRoute(appLayoutRoute);
 
 const routeTree = rootRoute.addChildren([
   loginRoute,
@@ -62,11 +76,13 @@ const routeTree = rootRoute.addChildren([
     settingsRoute.addChildren([
       settingsIndexRoute,
       settingsGeneralRoute,
-      settingsThemeRoute,
       settingsCategoriesRoute,
       settingsProductsRoute,
     ]),
     supplierRoute.addChildren([supplierIndexRoute, supplierListRoute, purchaseOrderListRoute]),
+    crmRoute.addChildren([crmIndexRoute, customerListRoute, membershipTierListRoute]),
+    promotionRoute,
+    reservationRoute,
   ]),
 ]);
 

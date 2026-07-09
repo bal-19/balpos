@@ -1,4 +1,11 @@
-import type { KitchenItemStatus, OrderStatus, OrderType, PaymentMethod, PaymentStatus } from "./enums.js";
+import type {
+  KitchenItemStatus,
+  OrderStatus,
+  OrderType,
+  PaymentMethod,
+  PaymentStatus,
+  TableStatus,
+} from "./enums.js";
 import type { PermissionCode } from "./permission.js";
 
 /**
@@ -67,6 +74,7 @@ export interface Table {
   name: string;
   capacity: number | null;
   isActive: boolean;
+  status: TableStatus;
 }
 
 export interface OrderItem {
@@ -96,6 +104,7 @@ export interface Order {
   orderType: OrderType;
   status: OrderStatus;
   tableId: string | null;
+  customerId: string | null;
   customerName: string | null;
   cashierId: string | null;
   subtotal: string;

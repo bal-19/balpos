@@ -1,5 +1,6 @@
 import type { PaymentMethod } from "@restaurant-pos/types";
 import { getIO } from "../../../core/socket.js";
+import { earnPointsForOrder } from "../../crm/service/point.service.js";
 import {
   createPayment,
   findOrderById,
@@ -58,5 +59,8 @@ export async function settlePaymentByReference(referenceNumber: string, xenditSt
 
   if (isPaid) {
     io.to(`outlet:${order.outletId}`).emit("order:completed", { orderId: order.id });
+    if (order.customerId) {
+      await earnPointsForOrder(order.customerId, order.id, order.totalAmount.toNumber());
+    }
   }
 }

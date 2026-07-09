@@ -14,6 +14,12 @@ export const PERMISSION_CODES = {
   RECIPE_MANAGE: "recipe.manage",
   SUPPLIER_VIEW: "supplier.view",
   SUPPLIER_MANAGE: "supplier.manage",
+  CRM_VIEW: "crm.view",
+  CRM_MANAGE: "crm.manage",
+  PROMOTION_VIEW: "promotion.view",
+  PROMOTION_MANAGE: "promotion.manage",
+  RESERVATION_VIEW: "reservation.view",
+  RESERVATION_MANAGE: "reservation.manage",
   ROLE_MANAGE: "role.manage",
 } as const;
 

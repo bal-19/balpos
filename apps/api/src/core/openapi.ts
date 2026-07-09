@@ -22,6 +22,9 @@ export const openApiDocument = {
     { name: "inventory", description: "Stok bahan baku & stock movement" },
     { name: "recipe", description: "Resep produk (bahan baku per menu)" },
     { name: "supplier", description: "Supplier & Purchase Order" },
+    { name: "crm", description: "Pelanggan, membership tier & riwayat poin" },
+    { name: "promotion", description: "Voucher, discount, happy hour, buy X get Y" },
+    { name: "reservation", description: "Reservasi meja (booking, check-in, status meja)" },
   ],
   paths: {
     "/auth/login": {
@@ -130,6 +133,53 @@ export const openApiDocument = {
     },
     "/supplier/purchase-orders/{id}/receive": {
       patch: { tags: ["supplier"], summary: "Terima barang (increment stok + StockMovement IN)", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/crm/customers": {
+      get: { tags: ["crm"], summary: "List pelanggan", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      post: { tags: ["crm"], summary: "Buat pelanggan", security: [{ bearerAuth: [] }], responses: { "201": { description: "Created" } } },
+    },
+    "/crm/customers/{id}": {
+      get: { tags: ["crm"], summary: "Detail pelanggan", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      patch: { tags: ["crm"], summary: "Update pelanggan", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      delete: { tags: ["crm"], summary: "Hapus (soft delete) pelanggan", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/crm/customers/{id}/points": {
+      get: { tags: ["crm"], summary: "Riwayat poin pelanggan", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/crm/membership-tiers": {
+      get: { tags: ["crm"], summary: "List membership tier", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      post: { tags: ["crm"], summary: "Buat membership tier", security: [{ bearerAuth: [] }], responses: { "201": { description: "Created" } } },
+    },
+    "/crm/membership-tiers/{id}": {
+      patch: { tags: ["crm"], summary: "Update membership tier", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      delete: { tags: ["crm"], summary: "Hapus membership tier", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/promotion/promotions": {
+      get: { tags: ["promotion"], summary: "List promo", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      post: { tags: ["promotion"], summary: "Buat promo (voucher/discount/happy hour/buy x get y)", security: [{ bearerAuth: [] }], responses: { "201": { description: "Created" } } },
+    },
+    "/promotion/promotions/{id}": {
+      patch: { tags: ["promotion"], summary: "Update promo", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      delete: { tags: ["promotion"], summary: "Hapus promo", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/reservation/reservations": {
+      get: { tags: ["reservation"], summary: "List reservasi (filter tanggal/status)", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+      post: { tags: ["reservation"], summary: "Buat reservasi meja (booking)", security: [{ bearerAuth: [] }], responses: { "201": { description: "Created" } } },
+    },
+    "/reservation/reservations/{id}/confirm": {
+      patch: { tags: ["reservation"], summary: "Konfirmasi reservasi — meja jadi RESERVED", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/reservation/reservations/{id}/check-in": {
+      patch: { tags: ["reservation"], summary: "Check-in tamu — meja jadi OCCUPIED", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/reservation/reservations/{id}/complete": {
+      patch: { tags: ["reservation"], summary: "Selesaikan reservasi — meja jadi AVAILABLE", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/reservation/reservations/{id}/cancel": {
+      patch: { tags: ["reservation"], summary: "Batalkan reservasi", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
+    },
+    "/reservation/reservations/{id}/no-show": {
+      patch: { tags: ["reservation"], summary: "Tandai tamu tidak datang (no-show)", security: [{ bearerAuth: [] }], responses: { "200": { description: "OK" } } },
     },
   },
   components: {

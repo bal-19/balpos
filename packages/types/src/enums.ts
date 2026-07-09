@@ -18,3 +18,25 @@ export type StockMovementType = (typeof STOCK_MOVEMENT_TYPES)[number];
 
 export const PURCHASE_ORDER_STATUSES = ["DRAFT", "ORDERED", "RECEIVED", "CANCELLED"] as const;
 export type PurchaseOrderStatus = (typeof PURCHASE_ORDER_STATUSES)[number];
+
+export const PROMOTION_TYPES = ["VOUCHER", "DISCOUNT", "HAPPY_HOUR", "BUY_X_GET_Y"] as const;
+export type PromotionType = (typeof PROMOTION_TYPES)[number];
+
+export const DISCOUNT_TYPES = ["PERCENTAGE", "FIXED_AMOUNT"] as const;
+export type DiscountType = (typeof DISCOUNT_TYPES)[number];
+
+export const RESERVATION_STATUSES = [
+  "PENDING",
+  "CONFIRMED",
+  "SEATED",
+  "COMPLETED",
+  "CANCELLED",
+  "NO_SHOW",
+] as const;
+export type ReservationStatus = (typeof RESERVATION_STATUSES)[number];
+
+export const TABLE_STATUSES = ["AVAILABLE", "OCCUPIED", "RESERVED"] as const;
+export type TableStatus = (typeof TABLE_STATUSES)[number];
+
+export const POINT_HISTORY_TYPES = ["EARN", "REDEEM", "ADJUSTMENT"] as const;
+export type PointHistoryType = (typeof POINT_HISTORY_TYPES)[number];

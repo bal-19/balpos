@@ -123,7 +123,7 @@ function OrderItemCard({ item, index }: OrderItemCardProps) {
       style={{ animationDelay: `${index * 60}ms` }}
     >
       {/* Item icon placeholder */}
-      <div className="w-16 h-16 rounded-2xl shrink-0 bg-[#f4f4f0] flex items-center justify-center">
+      <div className="w-16 h-16 rounded-2xl shrink-0" style={{ backgroundColor: "var(--color-surface-lighter)" }} >
         <Icon name="lunch_dining" className="text-primary/40 text-[28px]" />
       </div>
 
@@ -139,7 +139,7 @@ function OrderItemCard({ item, index }: OrderItemCardProps) {
 
         {item.notes && (
           <div className="flex flex-wrap gap-1.5 mb-2">
-            <span className="text-xs px-2.5 py-1 bg-[#dae8e4] text-[#4b635c] rounded-full flex items-center gap-1">
+            <span className="text-xs px-2.5 py-1 rounded-full flex items-center gap-1" style={{ backgroundColor: "var(--color-note-bg)", color: "var(--color-note-text)" }}>
               <Icon name="notes" className="text-[12px]" />
               {item.notes}
             </span>
@@ -150,7 +150,7 @@ function OrderItemCard({ item, index }: OrderItemCardProps) {
           <span className="text-[11px] text-black/40 uppercase tracking-wider font-medium">
             Qty
           </span>
-          <span className="text-xs font-bold bg-[#c7eade] text-[#02241d] px-2.5 py-0.5 rounded">
+          <span className="text-xs font-bold px-2.5 py-0.5 rounded" style={{ backgroundColor: "var(--color-qty-bg)", color: "var(--color-qty-text)" }}>
             {item.quantity}
           </span>
           {item.unitPrice !== item.subtotal && item.quantity > 1 && (
@@ -253,7 +253,7 @@ function OrderSummaryPanel({ order, paymentUpdate, qrDataUrl }: OrderSummaryPane
             </span>
 
             {/* QR code with animated corners */}
-            <div className="qr-wrap p-4 bg-[#efeeea] rounded-3xl border border-[#c1c8c4] relative">
+            <div className="qr-wrap p-4 rounded-3xl relative" style={{ backgroundColor: "var(--color-surface-light)", borderColor: "var(--color-border)" }}>
               {/* Corners */}
               <div className="qr-corner absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-xl" />
               <div className="qr-corner absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-xl" />
@@ -276,7 +276,7 @@ function OrderSummaryPanel({ order, paymentUpdate, qrDataUrl }: OrderSummaryPane
           </>
         ) : (
           <>
-            <div className="w-16 h-16 rounded-2xl bg-[#efeeea] flex items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ backgroundColor: "var(--color-surface-light)" }}>
               <Icon name="qr_code_2" className="text-primary/40 text-[32px]" />
             </div>
             <div className="space-y-1">
@@ -354,9 +354,9 @@ export function App() {
   if (!outlet) return null;
 
   return (
-    <div className="h-screen flex flex-col bg-[#faf9f5] text-[#1b1c1a] overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: "var(--color-page-bg)", color: "var(--color-page-text)" }}>
       {/* ── Header ── */}
-      <header className="h-20 bg-white border-b border-[#c1c8c4] flex items-center justify-between px-8 shrink-0">
+      <header className="h-20 bg-white flex items-center justify-between px-8 shrink-0" style={{ borderColor: "var(--color-border)" }}>
         {/* Brand / store info */}
         <div className="flex items-center gap-4">
           {outlet.logoUrl ? (
@@ -396,7 +396,7 @@ export function App() {
               <div className="flex items-center justify-between shrink-0">
                 <h1 className="font-bold text-primary text-2xl flex items-center gap-3" style={{ letterSpacing: "-0.01em" }}>
                   Pesanan Anda
-                  <span className="bg-[#cae6dd] text-[#4f6861] text-sm px-3 py-1 rounded-full font-bold">
+                  <span className="text-sm px-3 py-1 rounded-full font-bold" style={{ backgroundColor: "var(--color-badge-bg)", color: "var(--color-badge-text)" }}>
                     {totalItems(order.items)} Item
                   </span>
                 </h1>
@@ -427,12 +427,12 @@ export function App() {
       </main>
 
       {/* ── Footer: Rewards Banner ── */}
-      <footer className="h-20 bg-[#cde8df] flex items-center justify-between px-8 shrink-0 relative overflow-hidden">
+      <footer className="h-20 flex items-center justify-between px-8 shrink-0 relative overflow-hidden" style={{ backgroundColor: "var(--color-footer-bg)" }}>
         {/* Dot grid texture */}
         <div
           className="absolute inset-0 pointer-events-none opacity-10"
           style={{
-            backgroundImage: "radial-gradient(circle at 2px 2px, #07201a 1px, transparent 0)",
+            backgroundImage: "radial-gradient(circle at 2px 2px, var(--color-dot-pattern) 1px, transparent 0)",
             backgroundSize: "24px 24px",
           }}
         />

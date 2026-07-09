@@ -35,6 +35,7 @@ export function toOrderDto(order: OrderWithRelations): OrderDto {
     orderType: order.orderType,
     status: order.status,
     tableId: order.tableId,
+    customerId: order.customerId,
     customerName: order.customerName,
     cashierId: order.cashierId,
     subtotal: order.subtotal.toString(),

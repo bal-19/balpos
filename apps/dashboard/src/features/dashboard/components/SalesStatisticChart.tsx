@@ -1,14 +1,19 @@
 import { Card, CardHeader, CardTitle } from "@restaurant-pos/ui";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useSalesStatistic } from "../hooks/useSalesStatistic";
 
-const COLORS = ["#2C4A3B", "#C97B3E", "#7A8B99", "#B23A48", "#5B7B9A"];
+const DEFAULT_COLORS = ["#2C4A3B", "#C97B3E", "#7A8B99", "#B23A48", "#5B7B9A"];
 const RANGES = ["day", "month", "year"] as const;
 
 export function SalesStatisticChart() {
   const [range, setRange] = useState<(typeof RANGES)[number]>("day");
   const { data, isLoading } = useSalesStatistic(range);
+  const colors = useMemo(() => {
+    if (typeof document === "undefined") return DEFAULT_COLORS;
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue("--brand-primary").trim() || "#2C4A3B";
+    return [primaryColor, ...DEFAULT_COLORS.slice(1)];
+  }, []);
 
   return (
     <Card>
@@ -45,7 +50,7 @@ export function SalesStatisticChart() {
                   key={category}
                   type="monotone"
                   dataKey={category}
-                  stroke={COLORS[index % COLORS.length]}
+                  stroke={colors[index % colors.length]}
                   strokeWidth={2}
                   dot={false}
                 />
