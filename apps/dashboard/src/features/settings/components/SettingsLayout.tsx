@@ -1,10 +1,6 @@
 import { Link, Outlet } from "@tanstack/react-router";
 
-const TABS = [
-  { to: "/settings/general", label: "General" },
-  { to: "/settings/categories", label: "Categories" },
-  { to: "/settings/products", label: "Products" },
-];
+const TABS = [{ to: "/settings/general", label: "General" }];
 
 export function SettingsLayout() {
   return (

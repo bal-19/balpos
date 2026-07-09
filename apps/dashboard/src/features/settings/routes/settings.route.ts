@@ -39,19 +39,28 @@ export function createSettingsGeneralRoute(parentRoute: AnyRoute) {
   });
 }
 
-
-export function createSettingsCategoriesRoute(parentRoute: AnyRoute) {
+export function createCategoriesRoute(parentRoute: AnyRoute) {
   return createRoute({
     getParentRoute: () => parentRoute,
     path: "/categories",
+    beforeLoad: () => {
+      if (!useAuthStore.getState().hasPermission(PERMISSION_CODES.CATALOG_VIEW)) {
+        throw redirect({ to: "/" });
+      }
+    },
     component: CategoryTable,
   });
 }
 
-export function createSettingsProductsRoute(parentRoute: AnyRoute) {
+export function createProductsRoute(parentRoute: AnyRoute) {
   return createRoute({
     getParentRoute: () => parentRoute,
     path: "/products",
+    beforeLoad: () => {
+      if (!useAuthStore.getState().hasPermission(PERMISSION_CODES.CATALOG_VIEW)) {
+        throw redirect({ to: "/" });
+      }
+    },
     component: ProductTable,
   });
 }

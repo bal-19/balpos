@@ -20,10 +20,10 @@ import {
 } from "./features/report/routes/report.route";
 import { createReservationRoute } from "./features/reservation/routes/reservation.route";
 import {
-  createSettingsCategoriesRoute,
+  createCategoriesRoute,
+  createProductsRoute,
   createSettingsGeneralRoute,
   createSettingsIndexRoute,
-  createSettingsProductsRoute,
   createSettingsRoute,
 } from "./features/settings/routes/settings.route";
 import {
@@ -59,8 +59,9 @@ const inventoryRoute = createInventoryRoute(appLayoutRoute);
 const settingsRoute = createSettingsRoute(appLayoutRoute);
 const settingsIndexRoute = createSettingsIndexRoute(settingsRoute);
 const settingsGeneralRoute = createSettingsGeneralRoute(settingsRoute);
-const settingsCategoriesRoute = createSettingsCategoriesRoute(settingsRoute);
-const settingsProductsRoute = createSettingsProductsRoute(settingsRoute);
+
+const categoriesRoute = createCategoriesRoute(appLayoutRoute);
+const productsRoute = createProductsRoute(appLayoutRoute);
 
 const supplierRoute = createSupplierRoute(appLayoutRoute);
 const supplierIndexRoute = createSupplierIndexRoute(supplierRoute);
@@ -89,12 +90,9 @@ const routeTree = rootRoute.addChildren([
     dashboardRoute,
     posRoute,
     inventoryRoute,
-    settingsRoute.addChildren([
-      settingsIndexRoute,
-      settingsGeneralRoute,
-      settingsCategoriesRoute,
-      settingsProductsRoute,
-    ]),
+    settingsRoute.addChildren([settingsIndexRoute, settingsGeneralRoute]),
+    categoriesRoute,
+    productsRoute,
     supplierRoute.addChildren([supplierIndexRoute, supplierListRoute, purchaseOrderListRoute]),
     crmRoute.addChildren([crmIndexRoute, customerListRoute, membershipTierListRoute]),
     promotionRoute,
