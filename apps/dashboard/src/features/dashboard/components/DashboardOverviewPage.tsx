@@ -1,13 +1,19 @@
 import { formatCurrencyIDR } from "@restaurant-pos/utils";
 import { Banknote, Receipt, TrendingUp, Utensils } from "lucide-react";
+import { useAuthStore } from "../../../stores/auth.store";
 import { useDashboardOverview } from "../hooks/useDashboardOverview";
 import { ItemsPerformanceChart } from "./ItemsPerformanceChart";
+import { LowStockWidget } from "./LowStockWidget";
 import { RecentTransactionsTable } from "./RecentTransactionsTable";
 import { SalesStatisticChart } from "./SalesStatisticChart";
 import { StatCard } from "./StatCard";
+import { UpcomingReservationsWidget } from "./UpcomingReservationsWidget";
 
 export function DashboardOverviewPage() {
     const { data, isLoading, isError, error } = useDashboardOverview();
+    const hasPermission = useAuthStore((state) => state.hasPermission);
+    const showLowStock = hasPermission("inventory.view");
+    const showReservations = hasPermission("reservation.view");
 
     if (isLoading) {
         return (
@@ -28,23 +34,31 @@ export function DashboardOverviewPage() {
         );
     }
 
+    const hasSideWidgets = showLowStock || showReservations;
+
     return (
         <div className="flex flex-col gap-6">
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     label="Total Revenue Hari Ini"
                     value={formatCurrencyIDR(data?.totalRevenueToday ?? "0")}
-                    icon={<Banknote size={20} className="text-primary" />}
+                    icon={<Banknote size={20} />}
+                    trendPercent={data?.totalRevenueTrendPercent}
+                    sparkline={data?.totalRevenueSparkline}
                 />
                 <StatCard
-                    label="Total Orders Hari Ini"
+                    label="Total Order Hari Ini"
                     value={String(data?.totalOrdersToday ?? 0)}
-                    icon={<Receipt size={20} className="text-primary" />}
+                    icon={<Receipt size={20} />}
+                    trendPercent={data?.totalOrdersTrendPercent}
+                    sparkline={data?.totalOrdersSparkline}
                 />
                 <StatCard
                     label="Rata-rata Nilai Order"
                     value={formatCurrencyIDR(data?.averageOrderValueToday ?? "0")}
-                    icon={<TrendingUp size={20} className="text-primary" />}
+                    icon={<TrendingUp size={20} />}
+                    trendPercent={data?.averageOrderValueTrendPercent}
+                    sparkline={data?.averageOrderValueSparkline}
                 />
                 <StatCard
                     label="Menu Terlaris Hari Ini"
@@ -53,16 +67,30 @@ export function DashboardOverviewPage() {
                             ? `${data.bestSellerToday.productName} (${data.bestSellerToday.quantity})`
                             : "-"
                     }
-                    icon={<Utensils size={20} className="text-primary" />}
+                    icon={<Utensils size={20} />}
                 />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <SalesStatisticChart />
-                <ItemsPerformanceChart />
+            <div className={`grid grid-cols-1 gap-4 ${hasSideWidgets ? "lg:grid-cols-3" : ""}`}>
+                <div className={hasSideWidgets ? "lg:col-span-2" : ""}>
+                    <SalesStatisticChart />
+                </div>
+                {hasSideWidgets && (
+                    <div className="flex flex-col gap-4">
+                        {showLowStock && <LowStockWidget />}
+                        {showReservations && <UpcomingReservationsWidget />}
+                    </div>
+                )}
             </div>
 
-            <RecentTransactionsTable />
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <div className="lg:col-span-1">
+                    <ItemsPerformanceChart />
+                </div>
+                <div className="lg:col-span-2">
+                    <RecentTransactionsTable />
+                </div>
+            </div>
         </div>
     );
 }

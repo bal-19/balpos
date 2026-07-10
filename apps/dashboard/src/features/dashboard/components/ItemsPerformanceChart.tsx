@@ -1,35 +1,51 @@
 import { Card, CardHeader, CardTitle } from "@restaurant-pos/ui";
-import { useMemo } from "react";
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer } from "recharts";
+import { formatCurrencyIDR } from "@restaurant-pos/utils";
+import { Utensils } from "lucide-react";
 import { useItemsPerformance } from "../hooks/useItemsPerformance";
 
 export function ItemsPerformanceChart() {
-  const { data, isLoading } = useItemsPerformance(6);
-  const primaryColor = useMemo(() => {
-    if (typeof document === "undefined") return "#2C4A3B";
-    return getComputedStyle(document.documentElement).getPropertyValue("--brand-primary").trim() || "#2C4A3B";
-  }, []);
+  const { data, isLoading } = useItemsPerformance(5);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Items Performance</CardTitle>
+        <CardTitle>Produk Terlaris</CardTitle>
+        <span className="text-xs text-black/40">30 Hari Terakhir</span>
       </CardHeader>
-      <div className="h-64">
-        {isLoading || !data || data.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-sm text-black/40">
-            Belum ada data
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={data}>
-              <PolarGrid />
-              <PolarAngleAxis dataKey="name" tick={{ fontSize: 11 }} />
-              <Radar dataKey="quantity" stroke={primaryColor} fill={primaryColor} fillOpacity={0.4} />
-            </RadarChart>
-          </ResponsiveContainer>
-        )}
-      </div>
+      {isLoading ? (
+        <p className="text-sm text-black/40">Memuat...</p>
+      ) : !data || data.length === 0 ? (
+        <p className="text-sm text-black/40">Belum ada data.</p>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {data.map((item, index) => (
+            <div
+              key={item.productId}
+              className={`flex items-center gap-3 ${index > 0 ? "border-t border-black/5 pt-3" : ""}`}
+            >
+              {item.imageUrl ? (
+                <img
+                  src={item.imageUrl}
+                  alt={item.name}
+                  className="h-12 w-12 shrink-0 rounded-xl object-cover"
+                />
+              ) : (
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <Utensils size={18} />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold">{item.name}</p>
+                <p className="text-xs text-black/40">{item.quantity} porsi terjual</p>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="text-sm font-semibold">{formatCurrencyIDR(item.price)}</p>
+                <p className="text-[11px] text-black/40">{formatCurrencyIDR(item.revenue)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }

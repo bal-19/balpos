@@ -50,19 +50,42 @@ export function getOrderAggregateInRange(outletId: string, start: Date, end: Dat
   });
 }
 
-export function getTopItemsPerformance(outletId: string, since: Date, limit: number) {
-  return prisma.orderItem.groupBy({
-    by: ["productNameSnapshot"],
+/** Order harian (totalAmount + createdAt saja) untuk bucket sparkline di overview stat card. */
+export function findOrderTotalsInRange(outletId: string, start: Date, end: Date) {
+  return prisma.order.findMany({
+    where: { outletId, status: "COMPLETED", createdAt: { gte: start, lt: end } },
+    select: { totalAmount: true, createdAt: true },
+  });
+}
+
+export async function getTopItemsPerformance(outletId: string, since: Date, limit: number) {
+  const grouped = await prisma.orderItem.groupBy({
+    by: ["productId", "productNameSnapshot"],
     where: { order: { outletId, status: "COMPLETED", createdAt: { gte: since } } },
-    _sum: { quantity: true },
+    _sum: { quantity: true, subtotal: true },
     orderBy: { _sum: { quantity: "desc" } },
     take: limit,
   });
+
+  const products = await prisma.product.findMany({
+    where: { id: { in: grouped.map((row) => row.productId) } },
+    select: { id: true, imageUrl: true, price: true },
+  });
+  const productMap = new Map(products.map((product) => [product.id, product]));
+
+  return grouped.map((row) => ({
+    productId: row.productId,
+    productNameSnapshot: row.productNameSnapshot,
+    quantity: row._sum.quantity ?? 0,
+    revenue: row._sum.subtotal?.toString() ?? "0",
+    imageUrl: productMap.get(row.productId)?.imageUrl ?? null,
+    price: productMap.get(row.productId)?.price.toString() ?? "0",
+  }));
 }
 
 export function findRecentOrders(outletId: string, limit: number) {
   return prisma.order.findMany({
-    where: { outletId, status: "COMPLETED" },
+    where: { outletId },
     orderBy: { createdAt: "desc" },
     take: limit,
     include: { items: true },

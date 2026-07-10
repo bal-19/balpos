@@ -5,6 +5,7 @@ import { useSalesStatistic } from "../hooks/useSalesStatistic";
 
 const DEFAULT_COLORS = ["#2C4A3B", "#C97B3E", "#7A8B99", "#B23A48", "#5B7B9A"];
 const RANGES = ["day", "month", "year"] as const;
+const RANGE_LABELS: Record<(typeof RANGES)[number], string> = { day: "Harian", month: "Bulanan", year: "Tahunan" };
 
 export function SalesStatisticChart() {
   const [range, setRange] = useState<(typeof RANGES)[number]>("day");
@@ -17,19 +18,22 @@ export function SalesStatisticChart() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Sales Statistic</CardTitle>
-        <div className="flex gap-1">
+      <CardHeader className="items-start">
+        <div>
+          <CardTitle>Statistik Penjualan</CardTitle>
+          <p className="mt-0.5 text-xs text-black/40">Performa penjualan real-time per kategori</p>
+        </div>
+        <div className="flex gap-1 rounded-lg bg-black/5 p-1">
           {RANGES.map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => setRange(r)}
-              className={`rounded-full px-3 py-1 text-xs capitalize ${
-                range === r ? "bg-primary text-primary-foreground" : "bg-black/5 text-black/60"
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                range === r ? "bg-white text-primary shadow-sm" : "text-black/50 hover:text-primary"
               }`}
             >
-              {r}
+              {RANGE_LABELS[r]}
             </button>
           ))}
         </div>

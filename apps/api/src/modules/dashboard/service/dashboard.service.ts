@@ -8,7 +8,9 @@ import type {
 import { getOrSetCache } from "../../../core/cache.js";
 import {
   findOrderItemsInRange,
+  findOrderTotalsInRange,
   findRecentOrders,
+  getOrderAggregateInRange,
   getTodayBestSeller,
   getTodayOrderAggregate,
   getTopItemsPerformance,
@@ -20,21 +22,72 @@ function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
+/** Persentase perubahan vs periode sebelumnya. `previous === 0` diperlakukan sebagai 100% naik kalau ada nilai baru, 0% kalau tetap kosong. */
+function trendPercent(current: number, previous: number): string {
+  if (previous === 0) return (current > 0 ? 100 : 0).toFixed(2);
+  return (((current - previous) / previous) * 100).toFixed(2);
+}
+
 export async function getOverview(outletId: string): Promise<OverviewStats> {
   return getOrSetCache(`dashboard:${outletId}:overview`, CACHE_TTL_SECONDS, async () => {
-    const [aggregate, bestSeller] = await Promise.all([
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const tomorrowStart = new Date(todayStart);
+    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    const sevenDaysAgoStart = new Date(todayStart);
+    sevenDaysAgoStart.setDate(sevenDaysAgoStart.getDate() - 6);
+
+    const [aggregate, bestSeller, yesterdayAggregate, sevenDayOrders] = await Promise.all([
       getTodayOrderAggregate(outletId),
       getTodayBestSeller(outletId),
+      getOrderAggregateInRange(outletId, yesterdayStart, todayStart),
+      findOrderTotalsInRange(outletId, sevenDaysAgoStart, tomorrowStart),
     ]);
 
     const totalRevenueToday = aggregate._sum.totalAmount?.toNumber() ?? 0;
     const totalOrdersToday = aggregate._count._all;
     const averageOrderValueToday = totalOrdersToday > 0 ? round2(totalRevenueToday / totalOrdersToday) : 0;
 
+    const yesterdayRevenue = yesterdayAggregate._sum.totalAmount?.toNumber() ?? 0;
+    const yesterdayOrders = yesterdayAggregate._count._all;
+    const yesterdayAvgOrderValue = yesterdayOrders > 0 ? yesterdayRevenue / yesterdayOrders : 0;
+
+    const dayBuckets: { start: Date; end: Date }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const start = new Date(todayStart);
+      start.setDate(start.getDate() - i);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+      dayBuckets.push({ start, end });
+    }
+
+    const revenueSparkline = dayBuckets.map((bucket) =>
+      round2(
+        sevenDayOrders
+          .filter((order) => order.createdAt >= bucket.start && order.createdAt < bucket.end)
+          .reduce((sum, order) => sum + order.totalAmount.toNumber(), 0),
+      ),
+    );
+    const ordersSparkline = dayBuckets.map(
+      (bucket) => sevenDayOrders.filter((order) => order.createdAt >= bucket.start && order.createdAt < bucket.end).length,
+    );
+    const avgOrderValueSparkline = revenueSparkline.map((revenue, index) => {
+      const count = ordersSparkline[index]!;
+      return count > 0 ? round2(revenue / count) : 0;
+    });
+
     return {
       totalRevenueToday: totalRevenueToday.toFixed(2),
+      totalRevenueTrendPercent: trendPercent(totalRevenueToday, yesterdayRevenue),
+      totalRevenueSparkline: revenueSparkline,
       totalOrdersToday,
+      totalOrdersTrendPercent: trendPercent(totalOrdersToday, yesterdayOrders),
+      totalOrdersSparkline: ordersSparkline,
       averageOrderValueToday: averageOrderValueToday.toFixed(2),
+      averageOrderValueTrendPercent: trendPercent(averageOrderValueToday, yesterdayAvgOrderValue),
+      averageOrderValueSparkline: avgOrderValueSparkline,
       bestSellerToday: bestSeller
         ? { productName: bestSeller.productNameSnapshot, quantity: bestSeller._sum.quantity ?? 0 }
         : null,
@@ -138,7 +191,14 @@ export async function getItemsPerformance(outletId: string, limit: number): Prom
     since.setDate(since.getDate() - 30);
 
     const grouped = await getTopItemsPerformance(outletId, since, limit);
-    return grouped.map((row) => ({ name: row.productNameSnapshot, quantity: row._sum.quantity ?? 0 }));
+    return grouped.map((row) => ({
+      productId: row.productId,
+      name: row.productNameSnapshot,
+      quantity: row.quantity,
+      revenue: row.revenue,
+      price: row.price,
+      imageUrl: row.imageUrl,
+    }));
   });
 }
 
@@ -150,6 +210,7 @@ export async function getRecentTransactions(outletId: string, limit: number): Pr
     customerName: order.customerName,
     itemsSummary: order.items.map((item) => `${item.productNameSnapshot} x${item.quantity}`).join(", "),
     totalAmount: order.totalAmount.toString(),
+    status: order.status,
     createdAt: order.createdAt.toISOString(),
   }));
 }
