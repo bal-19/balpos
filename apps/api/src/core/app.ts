@@ -29,7 +29,20 @@ import { openApiDocument } from "./openapi.js";
 export function createApp(): Express {
   const app = express();
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          "script-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+          "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          "font-src": ["'self'", "https://fonts.gstatic.com"],
+          "img-src": ["'self'", "data:", "https:"],
+          "connect-src": ["'self'"],
+        },
+      },
+    }),
+  );
   app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
