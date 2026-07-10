@@ -1,6 +1,7 @@
 import { Spinner } from "@restaurant-pos/ui";
 import { formatCurrencyIDR } from "@restaurant-pos/utils";
 import { Banknote, Receipt, TrendingUp, Utensils } from "lucide-react";
+import { motion } from "motion/react";
 import { useAuthStore } from "../../../stores/auth.store";
 import { useDashboardOverview } from "../hooks/useDashboardOverview";
 import { ItemsPerformanceChart } from "./ItemsPerformanceChart";
@@ -9,6 +10,16 @@ import { RecentTransactionsTable } from "./RecentTransactionsTable";
 import { SalesStatisticChart } from "./SalesStatisticChart";
 import { StatCard } from "./StatCard";
 import { UpcomingReservationsWidget } from "./UpcomingReservationsWidget";
+
+const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.08 } },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 14 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 export function DashboardOverviewPage() {
     const { data, isLoading, isError, error } = useDashboardOverview();
@@ -38,8 +49,16 @@ export function DashboardOverviewPage() {
     const hasSideWidgets = showLowStock || showReservations;
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col gap-6"
+        >
+            <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            >
                 <StatCard
                     label="Total Revenue Hari Ini"
                     value={formatCurrencyIDR(data?.totalRevenueToday ?? "0")}
@@ -70,9 +89,12 @@ export function DashboardOverviewPage() {
                     }
                     icon={<Utensils size={20} />}
                 />
-            </div>
+            </motion.div>
 
-            <div className={`grid grid-cols-1 gap-4 ${hasSideWidgets ? "lg:grid-cols-3" : ""}`}>
+            <motion.div
+                variants={itemVariants}
+                className={`grid grid-cols-1 gap-4 ${hasSideWidgets ? "lg:grid-cols-3" : ""}`}
+            >
                 <div className={hasSideWidgets ? "lg:col-span-2" : ""}>
                     <SalesStatisticChart />
                 </div>
@@ -82,16 +104,16 @@ export function DashboardOverviewPage() {
                         {showReservations && <UpcomingReservationsWidget />}
                     </div>
                 )}
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <motion.div variants={itemVariants} className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <div className="lg:col-span-1">
                     <ItemsPerformanceChart />
                 </div>
                 <div className="lg:col-span-2">
                     <RecentTransactionsTable />
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }

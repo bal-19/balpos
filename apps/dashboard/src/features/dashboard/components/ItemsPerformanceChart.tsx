@@ -7,10 +7,10 @@ export function ItemsPerformanceChart() {
   const { data, isLoading } = useItemsPerformance(5);
 
   return (
-    <Card>
+    <Card className="p-5">
       <CardHeader>
-        <CardTitle>Produk Terlaris</CardTitle>
-        <span className="text-xs text-black/40">30 Hari Terakhir</span>
+        <CardTitle className="text-xl font-semibold text-black/90">Produk Terlaris</CardTitle>
+        <span className="text-xs font-medium text-black/40">30 Hari Terakhir</span>
       </CardHeader>
       {isLoading ? (
         <Spinner />

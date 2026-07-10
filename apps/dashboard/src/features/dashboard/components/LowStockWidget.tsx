@@ -1,5 +1,5 @@
 import { Badge, Card, CardHeader, CardTitle, Spinner } from "@restaurant-pos/ui";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Package } from "lucide-react";
 import { useStockItems } from "../../inventory/hooks/useStockItems";
 
 export function LowStockWidget() {
@@ -7,9 +7,9 @@ export function LowStockWidget() {
   const lowStockItems = (data ?? []).filter((item) => item.isLowStock);
 
   return (
-    <Card>
+    <Card className="p-5">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-base text-black/90">
           <AlertTriangle size={16} className="text-red-600" />
           Stok Menipis
         </CardTitle>
@@ -22,11 +22,16 @@ export function LowStockWidget() {
       ) : (
         <div className="flex flex-col divide-y divide-black/5">
           {lowStockItems.slice(0, 4).map((item) => (
-            <div key={item.id} className="flex items-center justify-between py-2 text-sm">
-              <span className="font-medium">{item.name}</span>
-              <span className="text-xs font-medium text-red-600">
-                Sisa {item.currentStock} {item.unit}
-              </span>
+            <div key={item.id} className="flex items-center gap-3 py-2.5">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-white text-black/60 shadow-sm">
+                <Package size={16} />
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-black/85">{item.name}</p>
+                <p className="text-xs font-medium text-red-600">
+                  Sisa {item.currentStock} {item.unit}
+                </p>
+              </div>
             </div>
           ))}
         </div>
