@@ -83,6 +83,7 @@ export function generateColorPalette(primaryColor: string): ColorScale {
 export function validateContrast(
     foreground: string,
     background: string,
+    isLargeText: boolean = false,
 ): boolean {
     const fgLuminance = getRelativeLuminance(foreground);
     const bgLuminance = getRelativeLuminance(background);
@@ -92,7 +93,7 @@ export function validateContrast(
         (Math.min(fgLuminance, bgLuminance) + 0.05);
 
     // WCAG AA standard requires 4.5:1 for normal text, 3:1 for large text
-    return ratio >= 4.5;
+    return ratio >= (isLargeText ? 3 : 4.5);
 }
 
 export function getContrastingTextColor(backgroundColor: string): string {

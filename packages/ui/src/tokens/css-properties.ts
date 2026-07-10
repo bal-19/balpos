@@ -168,22 +168,27 @@ export function setCSSProperty(
 
 // Theme management utilities
 export class CSSPropertyManager {
-    private element: HTMLElement;
+    private element: HTMLElement | null;
 
-    constructor(element: HTMLElement = document.documentElement) {
-        this.element = element;
+    constructor(
+        element?: HTMLElement,
+    ) {
+        this.element =
+            element ??
+            (typeof document !== "undefined" ? document.documentElement : null);
     }
 
     setProperty(property: CSSCustomProperty, value: string): void {
-        this.element.style.setProperty(property, value);
+        this.element?.style.setProperty(property, value);
     }
 
     getProperty(property: CSSCustomProperty): string {
+        if (!this.element) return "";
         return getComputedStyle(this.element).getPropertyValue(property).trim();
     }
 
     removeProperty(property: CSSCustomProperty): void {
-        this.element.style.removeProperty(property);
+        this.element?.style.removeProperty(property);
     }
 
     setProperties(properties: CSSPropertyMap): void {
@@ -196,7 +201,7 @@ export class CSSPropertyManager {
         themeName: string,
         overrides: Partial<CSSPropertyMap> = {},
     ): void {
-        this.element.setAttribute("data-theme", themeName);
+        this.element?.setAttribute("data-theme", themeName);
 
         if (Object.keys(overrides).length > 0) {
             const validOverrides: CSSPropertyMap = {};
