@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle } from "@restaurant-pos/ui";
+import { Card, CardHeader, CardTitle, Spinner } from "@restaurant-pos/ui";
 import { useMemo, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useSalesStatistic } from "../hooks/useSalesStatistic";
@@ -40,7 +40,7 @@ export function SalesStatisticChart() {
       </CardHeader>
       <div className="h-64">
         {isLoading || !data ? (
-          <div className="flex h-full items-center justify-center text-sm text-black/40">Memuat...</div>
+          <Spinner className="h-full justify-center" />
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.data}>

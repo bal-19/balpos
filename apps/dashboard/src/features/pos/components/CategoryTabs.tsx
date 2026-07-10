@@ -1,3 +1,4 @@
+import { Spinner } from "@restaurant-pos/ui";
 import { useCategories } from "../hooks/useCategories";
 
 export function CategoryTabs({
@@ -9,7 +10,7 @@ export function CategoryTabs({
 }) {
   const { data, isLoading } = useCategories();
 
-  if (isLoading) return <div className="h-24 animate-pulse rounded-2xl bg-black/5" />;
+  if (isLoading) return <Spinner className="h-24 justify-center" />;
 
   return (
     <div className="grid grid-cols-3 gap-3">

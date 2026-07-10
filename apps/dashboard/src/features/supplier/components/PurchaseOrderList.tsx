@@ -1,5 +1,5 @@
 import type { PurchaseOrder } from "@restaurant-pos/types";
-import { Badge, Button } from "@restaurant-pos/ui";
+import { Badge, Button, Spinner } from "@restaurant-pos/ui";
 import { formatCurrencyIDR, formatDate } from "@restaurant-pos/utils";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -27,7 +27,7 @@ export function PurchaseOrderList() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : !data || data.length === 0 ? (
         <p className="text-sm text-black/40">Belum ada purchase order.</p>
       ) : (

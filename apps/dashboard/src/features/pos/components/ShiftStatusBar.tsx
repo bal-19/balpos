@@ -1,4 +1,4 @@
-import { Button } from "@restaurant-pos/ui";
+import { Button, Spinner } from "@restaurant-pos/ui";
 import { formatCurrencyIDR } from "@restaurant-pos/utils";
 import { AlertCircle, CheckCircle, DoorOpen, DoorClosed } from "lucide-react";
 import { useState } from "react";
@@ -14,7 +14,7 @@ export function ShiftStatusBar() {
     if (isLoading) {
         return (
             <div className="rounded-lg border border-black/10 bg-white p-4">
-                <p className="text-sm text-black/40">Memuat status shift...</p>
+                <Spinner />
             </div>
         );
     }

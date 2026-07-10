@@ -1,5 +1,5 @@
 import type { Customer } from "@restaurant-pos/types";
-import { Dialog, DialogContent, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@restaurant-pos/ui";
+import { Dialog, DialogContent, Spinner, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@restaurant-pos/ui";
 import { formatDateTime } from "@restaurant-pos/utils";
 import { useCustomerPoints } from "../hooks/useCustomers";
 
@@ -21,7 +21,7 @@ export function PointHistoryDialog({
           Saldo poin saat ini: <span className="font-semibold text-black">{customer?.pointBalance ?? 0}</span>
         </p>
         {isLoading ? (
-          <p className="text-sm text-black/40">Memuat...</p>
+          <Spinner />
         ) : !data || data.length === 0 ? (
           <p className="text-sm text-black/40">Belum ada riwayat poin.</p>
         ) : (

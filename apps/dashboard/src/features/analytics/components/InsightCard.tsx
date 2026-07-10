@@ -1,5 +1,5 @@
 import { PERMISSION_CODES, type AiInsightType } from "@restaurant-pos/types";
-import { Button, Card, CardHeader, CardTitle } from "@restaurant-pos/ui";
+import { Button, Card, CardHeader, CardTitle, Spinner } from "@restaurant-pos/ui";
 import { formatDateTime } from "@restaurant-pos/utils";
 import { Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
@@ -50,7 +50,7 @@ export function InsightCard({ type }: { type: AiInsightType }) {
       </CardHeader>
       <div className="flex flex-col gap-3">
         {isLoading ? (
-          <p className="text-sm text-black/40">Memuat...</p>
+          <Spinner />
         ) : insight ? (
           <>
             <p className="whitespace-pre-line text-sm text-black/80">{insight.content}</p>

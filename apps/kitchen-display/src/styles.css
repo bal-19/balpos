@@ -4,9 +4,7 @@
   --color-shadow-dark: rgba(2, 36, 29, 0.05);
 }
 
-/* KDS — font override: Geist */
 body {
-  font-family: "Geist", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

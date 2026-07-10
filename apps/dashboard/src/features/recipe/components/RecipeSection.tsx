@@ -1,4 +1,4 @@
-import { Button } from "@restaurant-pos/ui";
+import { Button, Spinner } from "@restaurant-pos/ui";
 import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useProductRecipe, useSaveProductRecipe, useStockItemsForRecipe } from "../hooks/useRecipe";
@@ -44,7 +44,7 @@ export function RecipeSection({ productId }: { productId: string }) {
     saveRecipe.mutate(rows, { onSuccess: () => setSaved(true) });
   }
 
-  if (isLoading) return <p className="text-xs text-black/40">Memuat resep...</p>;
+  if (isLoading) return <Spinner size="sm" />;
 
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-black/10 p-3">

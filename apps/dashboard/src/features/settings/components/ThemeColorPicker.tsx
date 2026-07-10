@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@restaurant-pos/ui";
+import { Button, Spinner } from "@restaurant-pos/ui";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useStoreSetting, useUpdateStoreSetting } from "../hooks/useStoreSetting";
@@ -22,7 +22,7 @@ export function ThemeColorPicker() {
 
   const currentColor = watch("primaryColor");
 
-  if (isLoading || !storeSetting) return <p className="text-sm text-black/40">Memuat...</p>;
+  if (isLoading || !storeSetting) return <Spinner />;
 
   function onSubmit(values: ThemeFormValues) {
     updateMutation.mutate({

@@ -1,4 +1,4 @@
-import { Badge, Card, CardHeader, CardTitle } from "@restaurant-pos/ui";
+import { Badge, Card, CardHeader, CardTitle, Spinner } from "@restaurant-pos/ui";
 import { AlertTriangle } from "lucide-react";
 import { useStockItems } from "../../inventory/hooks/useStockItems";
 
@@ -16,7 +16,7 @@ export function LowStockWidget() {
         {lowStockItems.length > 0 && <Badge variant="danger">{lowStockItems.length} item</Badge>}
       </CardHeader>
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : lowStockItems.length === 0 ? (
         <p className="text-sm text-black/40">Semua stok aman.</p>
       ) : (

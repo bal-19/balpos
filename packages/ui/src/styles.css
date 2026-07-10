@@ -1,7 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: var(--brand-primary, #2c4a3b);
-  --color-primary-foreground: var(--brand-primary-fg, #f5f3ea);
-  --color-surface: #f5f3ea;
+  --color-primary: var(--brand-primary, #1A3A32);
+  --color-primary-foreground: var(--brand-primary-fg, #FAF9F5);
+  --color-surface: #FAF9F5;
+  --color-background: #FAF9F5;
+
+  --font-sans: "Geist", sans-serif;
+
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: var(--radius);
+  --radius-xl: 12px;
+}
+
+body {
+  font-family: var(--font-sans);
 }

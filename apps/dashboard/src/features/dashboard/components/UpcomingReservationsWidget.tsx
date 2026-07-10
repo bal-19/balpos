@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle } from "@restaurant-pos/ui";
+import { Card, CardHeader, CardTitle, Spinner } from "@restaurant-pos/ui";
 import { formatDateTime } from "@restaurant-pos/utils";
 import { CalendarCheck, ChevronRight } from "lucide-react";
 import { useReservations } from "../../reservation/hooks/useReservations";
@@ -19,7 +19,7 @@ export function UpcomingReservationsWidget() {
         </CardTitle>
       </CardHeader>
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : upcoming.length === 0 ? (
         <p className="text-sm text-black/40">Tidak ada reservasi mendatang.</p>
       ) : (

@@ -1,6 +1,7 @@
 import {
   Badge,
   Button,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -36,7 +37,7 @@ export function ExportHistoryPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : !data || data.items.length === 0 ? (
         <p className="text-sm text-black/40">Belum ada riwayat export.</p>
       ) : (

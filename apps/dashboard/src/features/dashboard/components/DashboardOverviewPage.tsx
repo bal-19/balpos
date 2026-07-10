@@ -1,3 +1,4 @@
+import { Spinner } from "@restaurant-pos/ui";
 import { formatCurrencyIDR } from "@restaurant-pos/utils";
 import { Banknote, Receipt, TrendingUp, Utensils } from "lucide-react";
 import { useAuthStore } from "../../../stores/auth.store";
@@ -18,7 +19,7 @@ export function DashboardOverviewPage() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <p className="text-sm text-black/60">Memuat data dashboard...</p>
+                <Spinner size="lg" />
             </div>
         );
     }

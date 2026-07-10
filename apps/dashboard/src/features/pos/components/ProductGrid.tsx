@@ -1,3 +1,4 @@
+import { Spinner } from "@restaurant-pos/ui";
 import { useProducts } from "../hooks/useProducts";
 import { ProductCard } from "./ProductCard";
 
@@ -6,10 +7,8 @@ export function ProductGrid({ categoryId }: { categoryId: string | null }) {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-4 gap-3">
-        {Array.from({ length: 8 }).map((_, index) => (
-          <div key={index} className="h-40 animate-pulse rounded-2xl bg-black/5" />
-        ))}
+      <div className="flex items-center justify-center py-12">
+        <Spinner size="lg" />
       </div>
     );
   }

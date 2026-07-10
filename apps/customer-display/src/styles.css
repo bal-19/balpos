@@ -20,9 +20,7 @@
   --color-scrollbar-thumb: #c1c8c4;
 }
 
-/* Customer Display — font Geist */
 body {
-  font-family: "Geist", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

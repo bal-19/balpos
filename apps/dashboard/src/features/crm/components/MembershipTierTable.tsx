@@ -1,6 +1,7 @@
 import type { MembershipTier } from "@restaurant-pos/types";
 import {
   Button,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -38,7 +39,7 @@ export function MembershipTierTable() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : (
         <Table>
           <TableHead>

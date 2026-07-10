@@ -2,6 +2,7 @@ import type { Customer } from "@restaurant-pos/types";
 import {
   Badge,
   Button,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -47,7 +48,7 @@ export function CustomerTable() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : (
         <Table>
           <TableHead>

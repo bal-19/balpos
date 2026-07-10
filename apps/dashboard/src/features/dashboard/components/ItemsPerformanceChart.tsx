@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle } from "@restaurant-pos/ui";
+import { Card, CardHeader, CardTitle, Spinner } from "@restaurant-pos/ui";
 import { formatCurrencyIDR } from "@restaurant-pos/utils";
 import { Utensils } from "lucide-react";
 import { useItemsPerformance } from "../hooks/useItemsPerformance";
@@ -13,7 +13,7 @@ export function ItemsPerformanceChart() {
         <span className="text-xs text-black/40">30 Hari Terakhir</span>
       </CardHeader>
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : !data || data.length === 0 ? (
         <p className="text-sm text-black/40">Belum ada data.</p>
       ) : (

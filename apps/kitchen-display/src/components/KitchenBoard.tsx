@@ -4,6 +4,7 @@ import type {
   KitchenOrder,
   KitchenOrderItem,
 } from "@restaurant-pos/types";
+import { Spinner } from "@restaurant-pos/ui";
 import { buildKitchenTicketHtml, openPrintWindow } from "@restaurant-pos/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -607,12 +608,7 @@ export function KitchenBoard() {
           </div>
 
           <div className="flex items-center gap-3">
-            {isLoading && (
-              <span className="text-xs text-black/40 flex items-center gap-1">
-                <Icon name="sync" className="text-[14px] animate-spin" />
-                Memuat...
-              </span>
-            )}
+            {isLoading && <Spinner size="sm" className="text-xs text-black/40" />}
             <button
               type="button"
               className="flex items-center gap-1.5 bg-black/5 hover:bg-black/10 px-3 py-2 rounded-full text-[11px] font-semibold text-black/60 uppercase tracking-widest transition-colors"

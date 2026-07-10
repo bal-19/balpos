@@ -1,3 +1,4 @@
+import { Spinner } from "@restaurant-pos/ui";
 import { useEffect, useState } from "react";
 import { useCategories } from "../hooks/useCategories";
 import { useCurrentShift } from "../hooks/useShift";
@@ -18,7 +19,7 @@ export function PosPage() {
     }, [categories, selectedCategoryId]);
 
     if (isShiftLoading) {
-        return <p className="text-sm text-black/40">Memuat status shift...</p>;
+        return <Spinner size="lg" fullPage />;
     }
 
     if (!shift) {

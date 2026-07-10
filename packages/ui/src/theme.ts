@@ -25,5 +25,5 @@ export function applyBrandColor(hex: string) {
 
 /** Bootstrap global brand color (statis). Panggil dari app's main.tsx saat startup. */
 export function bootstrapTheme() {
-  applyBrandColor("#2C4A3B");
+  applyBrandColor("#1A3A32");
 }

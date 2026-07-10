@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, DateRangePicker, type DateRange } from "@restaurant-pos/ui";
+import { Card, CardHeader, CardTitle, DateRangePicker, Spinner, type DateRange } from "@restaurant-pos/ui";
 import { formatCurrencyIDR } from "@restaurant-pos/utils";
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -41,7 +41,7 @@ export function ReportSummaryPage() {
       {filter === "CUSTOM" && <DateRangePicker value={range} onChange={setRange} className="w-fit" />}
 
       {isLoading || !data ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

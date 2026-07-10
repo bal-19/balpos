@@ -1,4 +1,4 @@
-import { Badge, Button, Input, Select, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@restaurant-pos/ui";
+import { Badge, Button, Input, Select, Spinner, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@restaurant-pos/ui";
 import { formatDateTime } from "@restaurant-pos/utils";
 import { useState } from "react";
 import { useAuditLogs } from "../hooks/useAuditLogs";
@@ -65,7 +65,7 @@ export function AuditLogPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : !data || data.items.length === 0 ? (
         <p className="text-sm text-black/40">Belum ada aktivitas.</p>
       ) : (

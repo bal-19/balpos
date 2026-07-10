@@ -4,6 +4,7 @@ import {
   Card,
   CardHeader,
   CardTitle,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -35,7 +36,7 @@ export function RecentTransactionsTable() {
         <CardTitle>Transaksi Terbaru</CardTitle>
       </CardHeader>
       {isLoading ? (
-        <p className="text-sm text-black/40">Memuat...</p>
+        <Spinner />
       ) : !data || data.length === 0 ? (
         <p className="text-sm text-black/40">Belum ada transaksi.</p>
       ) : (

@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, Textarea } from "@restaurant-pos/ui";
+import { Button, Input, Spinner, Textarea } from "@restaurant-pos/ui";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
@@ -40,7 +40,7 @@ export function GeneralSettingsForm() {
     }
   }, [storeSetting, reset]);
 
-  if (isLoading || !storeSetting) return <p className="text-sm text-black/40">Memuat...</p>;
+  if (isLoading || !storeSetting) return <Spinner />;
 
   function onSubmit(values: StoreSettingFormValues) {
     updateMutation.mutate({ ...values, primaryColor: storeSetting!.primaryColor });
